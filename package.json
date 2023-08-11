@@ -1,0 +1,38 @@
+{
+  "name": "mon-petit-essai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix . && prettier --write .",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arno-ctrl93/mon-petit-essai.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arno-ctrl93/mon-petit-essai/issues"
+  },
+  "homepage": "https://github.com/arno-ctrl93/mon-petit-essai#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.1",
+    "@types/node": "^20.4.9",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.47.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.1",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
