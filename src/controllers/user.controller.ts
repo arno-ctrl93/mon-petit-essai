@@ -94,11 +94,36 @@ async function patchUser(req: Request, res: Response){
 
 }
 
+async function putUser(req: Request, res: Response) {
+    console.log("UserController - putUser");
+
+    const userDto: UserInboundDto = new UserInboundDto(req.body.name, req.body.email);
+    const errors: ValidationError[] = await validate(userDto);
+
+    if (errors.length > 0) {
+        console.log("UserController - putUser - errors");
+        console.log(errors);
+        res.status(400).send(errors);
+        return;
+    }
+
+    try {
+        const user = await UserService.putUser(userDto)
+        const userOutboundDto= new UserOutboundDto(user.name, user.email);
+        res.status(200).send(userOutboundDto);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(401).send(error);
+    }
+}
+
 
 
 export default {
     postUser,
     getUser,
     deleteUser,
-    patchUser
+    patchUser,
+    putUser
 }

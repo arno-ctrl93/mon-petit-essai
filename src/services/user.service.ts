@@ -1,3 +1,4 @@
+import { log } from "console";
 import { UserInboundDto } from "../objects/dtos/inbound/user.inbound.dto";
 import UserEntity from "../objects/entities/user.entity";
 import userRepository from "../repositories/user.repository";
@@ -11,7 +12,7 @@ async function postUser(userDto: UserInboundDto) {
 
     try {
         const createdUserEntity: UserEntity = await userRepository.postUser(userEntity);
-        return;
+        return createdUserEntity;
     }
     catch (error) {
         console.log(error);
@@ -57,12 +58,28 @@ async function patchUser(userDto: UserInboundDto) {
         throw error;
     }
 }
-    
 
+async function putUser(userDto: UserInboundDto) {
+    console.log(user);
+
+    try {
+        const user = await getUser(userDto.email);
+        if (user != null) {
+            return user;
+    }   else {
+            return await postUser(userDto);
+        }
+    }     
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
 
 export default {
     postUser,
     getUser,
     deleteUser,
-    patchUser
+    patchUser,
+    putUser
 }
