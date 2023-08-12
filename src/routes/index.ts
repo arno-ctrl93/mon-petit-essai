@@ -1,4 +1,5 @@
 import express from 'express';
+import UserRoute from './user.route';
 
 // Import route
 
@@ -6,5 +7,6 @@ import express from 'express';
 export const router = express.Router();
 
 // Use route
+router.use('/user', UserRoute);
 
 export default router;
