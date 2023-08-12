@@ -32,7 +32,23 @@ async function getUser(email: string) {
     }
 }
 
+async function deleteUser(email: string) {
+    console.log("UserService - deleteUser");
+
+    try {
+        await userRepository.deleteUser(email);
+        return;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+    
+
+
 export default {
     postUser,
-    getUser
+    getUser,
+    deleteUser
 }
