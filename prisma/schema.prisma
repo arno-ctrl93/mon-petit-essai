@@ -11,16 +11,12 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
-  name     String
-  password String
+  id    String @id @default(uuid())
+  email String @unique
+  name  String
 
   group Group?
 
-  created_at   DateTime
-  updated_at   DateTime
-  deleted_at   DateTime
   groups_users Groups_Users[]
   bets         Bet[]
 }
@@ -42,9 +38,6 @@ model Group {
   owner_id         String @unique
   users            User   @relation(fields: [owner_id], references: [id])
 
-  created_at   DateTime
-  updated_at   DateTime
-  deleted_at   DateTime
   groups_users Groups_Users[]
 }
 
@@ -58,10 +51,6 @@ model Bet {
 
   bet_team_one Int
   bet_team_two Int
-
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
 }
 
 model Match {
@@ -80,10 +69,6 @@ model Score_Team {
 
   rating Int
   score  Int
-
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
 }
 
 model Team {
@@ -91,8 +76,5 @@ model Team {
 
   name String
 
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime
   Score_Team Score_Team[]
 }
