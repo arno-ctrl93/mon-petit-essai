@@ -19,6 +19,20 @@ async function postUser(userDto: UserInboundDto) {
     }
 }
 
+async function getUser(email: string) {
+    console.log("UserService - getUser");
+
+    try {
+        const userEntity: UserEntity = await userRepository.getUser(email);
+        return userEntity;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export default {
-    postUser
+    postUser,
+    getUser
 }
