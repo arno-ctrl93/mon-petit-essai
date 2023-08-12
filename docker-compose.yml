@@ -5,8 +5,6 @@ services:
     build: .
     ports:
       - ${PORT}:${PORT}
-    environment:
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}
     depends_on:
       - db
     
@@ -16,7 +14,6 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
     ports:
       - '5433:${DB_PORT}'
     volumes:

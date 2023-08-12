@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  name     String
+  password String
+
+  group Group?
+
+  created_at   DateTime
+  updated_at   DateTime
+  deleted_at   DateTime
+  groups_users Groups_Users[]
+  bets         Bet[]
+}
+
+model Groups_Users {
+  group_id String
+  group    Group  @relation(fields: [group_id], references: [id])
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  @@id([group_id, user_id])
+}
+
+model Group {
+  id               String @id @default(uuid())
+  name             String
+  unique_public_id String @unique
+  owner_id         String @unique
+  users            User   @relation(fields: [owner_id], references: [id])
+
+  created_at   DateTime
+  updated_at   DateTime
+  deleted_at   DateTime
+  groups_users Groups_Users[]
+}
+
+model Bet {
+  id String @id @default(uuid())
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
+
+  match_id String
+
+  bet_team_one Int
+  bet_team_two Int
+
+  created_at DateTime
+  updated_at DateTime
+  deleted_at DateTime
+}
+
+model Match {
+  id         String       @id @default(uuid())
+  Score_Team Score_Team[]
+}
+
+model Score_Team {
+  id String @id @default(uuid())
+
+  team_id String
+  team    Team   @relation(fields: [team_id], references: [id])
+
+  match_id String
+  match    Match  @relation(fields: [match_id], references: [id])
+
+  rating Int
+  score  Int
+
+  created_at DateTime
+  updated_at DateTime
+  deleted_at DateTime
+}
+
+model Team {
+  id String @id @default(uuid())
+
+  name String
+
+  created_at DateTime
+  updated_at DateTime
+  deleted_at DateTime
+  Score_Team Score_Team[]
+}

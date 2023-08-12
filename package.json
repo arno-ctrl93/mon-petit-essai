@@ -7,8 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --fix . && prettier --write .",
     "build": "npx tsc",
+    "prisma:dev": "npx prisma migrate dev",
+    "prisma:prod": "npx prisma migrate deploy",
     "start": "node build/server.js",
-    "dev": "nodemon -L -e ts --exec \"npm run build && npm start\""
+    "dev": "npm run prisma:dev &&  nodemon -L -e ts --exec \"npm run build && npm start\"",
+    "prod": "npm run prisma:prod && npm run build && npm start"
   },
   "repository": {
     "type": "git",
@@ -40,6 +43,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@prisma/client": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "http-terminator": "^3.2.0",
