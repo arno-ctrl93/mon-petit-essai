@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import { UserInboundDto } from "../dto/inbound/user.inbound.dto";
+import { UserInboundDto } from "../objects/dtos/inbound/user.inbound.dto";
 import { ValidationError, validate } from "class-validator";
+import UserEntity from "../objects/entities/user.entity";
+import UserService from "../services/user.service";
 
 
 async function postUser(req: Request, res: Response) {
@@ -17,7 +19,14 @@ async function postUser(req: Request, res: Response) {
         return;
     }
 
-    res.send("UserController - postUser");
+    try {
+        await UserService.postUser(userDto);
+        res.status(201).send('User created');
+    }
+    catch (error) {
+        console.log(error);
+        res.status(401).send(error);
+    }
 }
 
 
