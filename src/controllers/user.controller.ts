@@ -70,10 +70,35 @@ async function deleteUser(req: Request, res: Response){
 
 }
 
+async function patchUser(req: Request, res: Response){
+    console.log("UserController - patchUser");
+
+    const userDto: UserInboundDto = new UserInboundDto(req.body.name, req.body.email);
+    const errors: ValidationError[] = await validate(userDto);
+
+    if (errors.length > 0) {
+        console.log("UserController - patchUser - errors");
+        console.log(errors);
+        res.status(400).send(errors);
+        return;
+    }
+
+    try {
+        await UserService.patchUser(userDto)
+        res.status(201).send('User updated');
+    }
+    catch (error) {
+        console.log(error);
+        res.status(401).send(error);
+    }
+
+}
+
 
 
 export default {
     postUser,
     getUser,
-    deleteUser
+    deleteUser,
+    patchUser
 }
