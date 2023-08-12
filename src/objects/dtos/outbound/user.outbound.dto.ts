@@ -7,4 +7,8 @@ export class UserOutboundDto {
         this.name = name;
         this.email = email;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a565b56 (:sparkles: ca get un user la team)

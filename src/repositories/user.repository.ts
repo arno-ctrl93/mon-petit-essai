@@ -29,7 +29,32 @@ async function postUser(userEntity: UserEntity) {
   }
 }
 
+async function getUser(email: string) {
+  console.log("UserRepository - getUser");
+
+  try {
+    const user : User | null = await prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    });
+
+    if (user == null) {
+      throw new Error("UserRepository - getUser - user not found");
+    }
+
+    const userEntity: UserEntity = UserEntity.toEntity(user);
+    return userEntity;
+
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 
 export default {
-  postUser
+  postUser,
+  getUser
 }
