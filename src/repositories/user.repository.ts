@@ -1,5 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import UserEntity from "../objects/entities/user.entity";
+import e from "express";
 
 const prisma = new PrismaClient();
 
@@ -71,9 +72,36 @@ async function deleteUser(email: string) {
   }
 }
 
+async function patchUser(userEntity: UserEntity) {
+  console.log("UserRepository - patchUser");
+
+  try { 
+    const user: User | null = await prisma.user.update({
+      where: {
+        email : userEntity.email
+      },
+      data: {
+        name: userEntity.name,
+      }
+    });
+
+    if (user == null) {
+      throw new Error("UserRepository - patchUser - user not found");
+    }
+
+    const updatedUserEntity: UserEntity = UserEntity.toEntity(user);
+    return updatedUserEntity;
+  }
+  catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 
 export default {
   postUser,
   getUser,
-  deleteUser
+  deleteUser,
+  patchUser
 }

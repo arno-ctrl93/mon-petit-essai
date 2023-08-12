@@ -44,11 +44,25 @@ async function deleteUser(email: string) {
         throw error;
     }
 }
+
+async function patchUser(userDto: UserInboundDto) {
+    console.log("UserService - patchUser");
+
+    try {
+        const userEntity: UserEntity = await userRepository.patchUser(userDto);
+        return userEntity;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
     
 
 
 export default {
     postUser,
     getUser,
-    deleteUser
+    deleteUser,
+    patchUser
 }
