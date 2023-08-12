@@ -51,11 +51,29 @@ async function getUser(req: Request, res: Response) {
     }
 }
 
+async function deleteUser(req: Request, res: Response){
+    console.log("UserController - deleteUser");
+    console.log(req.params.email);
 
+    const email = req.params.email;
+    try {
+        const user = await userService.deleteUser(email);
+        console.log(user);
+    res.status(200).send('User deleted');
+    }   
+
+    catch (error) {
+        console.log(error);
+        res.status(400).send(error);
+
+    }
+
+}
 
 
 
 export default {
     postUser,
-    getUser
+    getUser,
+    deleteUser
 }
