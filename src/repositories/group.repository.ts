@@ -30,6 +30,30 @@ async function createGroup(dto: CreateGroupInboundDto, userId: string) {
 
 }
 
+async function getGroupByUniqueId(uniqueId: string) {
+    console.log("GroupRepository - getGroupByUniqueId");
+
+    try {
+        const group: Group | null = await prisma.group.findUnique({
+            where: {
+                unique_public_id: uniqueId
+            }
+        });
+
+        if (group == null) {
+            throw new Error("GroupRepository - getGroupByUniqueId - group not found");
+        }
+
+        const groupEntity: GroupEntity = GroupEntity.toEntity(group);
+        return groupEntity;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export default {
-    createGroup
+    createGroup,
+    getGroupByUniqueId
 }
