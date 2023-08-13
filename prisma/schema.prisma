@@ -41,19 +41,20 @@ model Bet {
 }
 
 model Match {
-  id                    String   @id @default(uuid())
-  event_api_id          String   @unique
+  id                    String    @id @default(uuid())
+  event_api_id          String    @unique
+  round                 String
   started_at            DateTime
-  closed_at             DateTime
-  team_home             Team?    @relation("team_home", fields: [team_home_id], references: [id])
-  team_home_id          String?
-  team_home_probability Int      @default(0)
-  team_home_score       Int      @default(0)
-  team_away             Team?    @relation("team_away", fields: [team_away_id], references: [id])
-  team_away_id          String?
-  team_away_probability Int      @default(0)
-  team_away_score       Int      @default(0)
-  draw_probability      Int      @default(0)
+  closed_at             DateTime?
+  team_home             Team      @relation("team_home", fields: [team_home_id], references: [id])
+  team_home_id          String
+  team_home_probability Int       @default(0)
+  team_home_score       Int       @default(0)
+  team_away             Team      @relation("team_away", fields: [team_away_id], references: [id])
+  team_away_id          String
+  team_away_probability Int       @default(0)
+  team_away_score       Int       @default(0)
+  draw_probability      Int       @default(0)
   Bet                   Bet[]
 }
 
