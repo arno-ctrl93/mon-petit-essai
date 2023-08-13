@@ -75,16 +75,16 @@ async function deleteUser(email: string) {
   }
 }
 
-async function patchUser(userEntity: UserEntity) {
+async function patchUser(userDto: UserInboundDto) {
   console.log("UserRepository - patchUser");
 
   try {
     const user: User | null = await prisma.user.update({
       where: {
-        email: userEntity.getEmail()
+        email: userDto.email
       },
       data: {
-        name: userEntity.getName(),
+        name: userDto.name,
       }
     });
 
