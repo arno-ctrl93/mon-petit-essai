@@ -5,13 +5,13 @@ export class UserOutboundDto {
     name: string;
 
     email: string;
-    groups: GroupOutboundDto | null;
+    group: GroupOutboundDto | null;
 
     static toDto(user: UserEntity): UserOutboundDto {
         const userDto: UserOutboundDto = new UserOutboundDto(user.getName(), user.getEmail());
         const group = user.getGroup();
         if (group != null) {
-            userDto.groups = GroupOutboundDto.toDto(group);
+            userDto.group = GroupOutboundDto.toDto(group);
         }
         return userDto;
     }
@@ -19,6 +19,6 @@ export class UserOutboundDto {
     constructor(name: string, email: string) {
         this.name = name;
         this.email = email;
-        this.groups = null;
+        this.group = null;
     }
 }

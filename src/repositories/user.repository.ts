@@ -101,10 +101,30 @@ async function patchUser(userDto: UserInboundDto) {
   }
 }
 
+async function joinGroup(userId: string, groupId: string) {
+  console.log("UserRepository - joinGroup");
+
+  try {
+    await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        group_id: groupId
+      }
+    });
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("UserRepository - joinGroup - error");
+  }
+}
+
 
 export default {
   postUser,
   getUser,
   deleteUser,
-  patchUser
+  patchUser,
+  joinGroup
 }
