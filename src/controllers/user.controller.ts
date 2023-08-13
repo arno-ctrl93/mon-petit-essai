@@ -36,18 +36,18 @@ async function postUser(req: Request, res: Response) {
 async function getUser(req: Request, res: Response) {
     console.log("UserController - getUser");
     console.log(req.params.email);
-    
+
     const email = req.params.email;
     try {
         const user = await userService.getUser(email);
         console.log(user);
-        const userDto = new UserOutboundDto(user.name, user.email);
-      res.status(200).send(userDto);
+        const userDto = UserOutboundDto.toDto(user);
+        res.status(200).send(userDto);
     }
 
     catch (error) {
         console.log(error);
-        res.status(400).send(error);  
+        res.status(400).send(error);
     }
 }
 

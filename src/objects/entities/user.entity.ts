@@ -1,21 +1,60 @@
 
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
+import GroupEntity from "./group.entity";
+
+const userWithGroup = Prisma.validator<Prisma.UserArgs>()({
+    include: {
+        group: true
+    }
+});
+
+export type UserWithGroup = Prisma.UserGetPayload<typeof userWithGroup>;
 
 export default class UserEntity {
 
-    name: string;
+    private readonly id: string;
 
-    email: string;
+    private name: string;
 
-    public static toEntity(user: User): UserEntity {
-        return {
-            name: user.name,
-            email: user.email
-        };
+    private email: string;
+
+    private group: GroupEntity | null;
+
+    public static toEntity(user: User): UserEntity;
+    public static toEntity(user: UserWithGroup): UserEntity {
+
+        const userEntity: UserEntity = new UserEntity(user.id, user.name, user.email);
+
+        if (user.group != null) {
+            userEntity.group = GroupEntity.toEntity(user.group);
+        }
+
+        return userEntity;
     }
 
-    constructor(name: string, email: string) {
+    constructor(id: string, name: string, email: string) {
+        this.id = id;
         this.name = name;
         this.email = email;
+        this.group = null;
     }
+
+    // getters and setters
+
+    public getId(): string {
+        return this.id;
+    }
+
+    public getName(): string {
+        return this.name;
+    }
+
+    public getEmail(): string {
+        return this.email;
+    }
+
+    public getGroup(): GroupEntity | null {
+        return this.group;
+    }
+
 }

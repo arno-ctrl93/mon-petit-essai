@@ -7,10 +7,8 @@ import userRepository from "../repositories/user.repository";
 async function postUser(userDto: UserInboundDto) {
     console.log("UserService - postUser");
 
-    const userEntity: UserEntity = new UserEntity(userDto.name, userDto.email);
-
     try {
-        const createdUserEntity: UserEntity = await userRepository.postUser(userEntity);
+        const createdUserEntity: UserEntity = await userRepository.postUser(userDto);
         return;
     }
     catch (error) {
