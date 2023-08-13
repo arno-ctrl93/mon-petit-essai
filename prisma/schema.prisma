@@ -54,8 +54,10 @@ model Bet {
 }
 
 model Match {
-  id         String       @id @default(uuid())
-  Score_Team Score_Team[]
+  id               String       @id @default(uuid())
+  draw_probability Int
+  match_api_id     String       @unique
+  Score_Team       Score_Team[]
 }
 
 model Score_Team {
@@ -67,14 +69,15 @@ model Score_Team {
   match_id String
   match    Match  @relation(fields: [match_id], references: [id])
 
-  rating Int
-  score  Int
+  victory_probability Int
+  score               Int
 }
 
 model Team {
   id String @id @default(uuid())
 
-  name String
+  name        String
+  team_api_id String @unique
 
   Score_Team Score_Team[]
 }
