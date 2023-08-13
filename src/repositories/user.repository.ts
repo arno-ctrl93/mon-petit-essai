@@ -1,18 +1,18 @@
 import { PrismaClient, User } from "@prisma/client";
 import UserEntity from "../objects/entities/user.entity";
-import e from "express";
+import { UserInboundDto } from "../objects/dtos/inbound/user.inbound.dto";
 
 const prisma = new PrismaClient();
 
 
-async function postUser(userEntity: UserEntity) {
+async function postUser(userDto: UserInboundDto) {
   console.log("UserRepository - postUser");
 
   try {
     const user: User = await prisma.user.create({
       data: {
-        name: userEntity.name,
-        email: userEntity.email
+        name: userDto.name,
+        email: userDto.email
       }
     });
 
@@ -34,9 +34,12 @@ async function getUser(email: string) {
   console.log("UserRepository - getUser");
 
   try {
-    const user : User | null = await prisma.user.findUnique({
+    const user: User | null = await prisma.user.findUnique({
       where: {
         email: email
+      },
+      include: {
+        group: true
       }
     });
 
@@ -75,13 +78,13 @@ async function deleteUser(email: string) {
 async function patchUser(userEntity: UserEntity) {
   console.log("UserRepository - patchUser");
 
-  try { 
+  try {
     const user: User | null = await prisma.user.update({
       where: {
-        email : userEntity.email
+        email: userEntity.getEmail()
       },
       data: {
-        name: userEntity.name,
+        name: userEntity.getName(),
       }
     });
 
