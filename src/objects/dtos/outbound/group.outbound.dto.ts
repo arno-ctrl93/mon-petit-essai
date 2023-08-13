@@ -5,7 +5,7 @@ export class GroupOutboundDto {
     uniquePublicId: string;
 
     static toDto(group: GroupEntity): GroupOutboundDto {
-        const groupDto: GroupOutboundDto = new GroupOutboundDto(group.name, group.uniquePublicId);
+        const groupDto: GroupOutboundDto = new GroupOutboundDto(group.getName(), group.getUniquePublicId());
         return groupDto;
     }
 

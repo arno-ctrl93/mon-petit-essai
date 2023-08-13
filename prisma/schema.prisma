@@ -14,21 +14,11 @@ model User {
   id    String @id @default(uuid())
   email String @unique
   name  String
+  bets  Bet[]
 
-  group Group?
-
-  groups_users Groups_Users[]
-  bets         Bet[]
-}
-
-model Groups_Users {
-  group_id String
-  group    Group  @relation(fields: [group_id], references: [id])
-
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
-
-  @@id([group_id, user_id])
+  group_id      String?
+  group         Group?  @relation("group", fields: [group_id], references: [id])
+  created_group Group?  @relation("creation")
 }
 
 model Group {
@@ -36,48 +26,42 @@ model Group {
   name             String
   unique_public_id String @unique
   owner_id         String @unique
-  users            User   @relation(fields: [owner_id], references: [id])
-
-  groups_users Groups_Users[]
+  owner            User   @relation("creation", fields: [owner_id], references: [id])
+  User             User[] @relation("group")
 }
 
 model Bet {
-  id String @id @default(uuid())
-
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
-
-  match_id String
-
-  bet_team_one Int
-  bet_team_two Int
+  id            String @id @default(uuid())
+  user_id       String
+  user          User   @relation(fields: [user_id], references: [id])
+  match_id      String
+  match         Match  @relation(fields: [match_id], references: [id])
+  bet_team_home Int
+  bet_team_away Int
 }
 
 model Match {
-  id               String       @id @default(uuid())
-  draw_probability Int
-  match_api_id     String       @unique
-  Score_Team       Score_Team[]
-}
-
-model Score_Team {
-  id String @id @default(uuid())
-
-  team_id String
-  team    Team   @relation(fields: [team_id], references: [id])
-
-  match_id String
-  match    Match  @relation(fields: [match_id], references: [id])
-
-  victory_probability Int
-  score               Int
+  id                    String    @id @default(uuid())
+  event_api_id          String    @unique
+  round                 String
+  started_at            DateTime
+  closed_at             DateTime?
+  team_home             Team      @relation("team_home", fields: [team_home_id], references: [id])
+  team_home_id          String
+  team_home_probability Int       @default(0)
+  team_home_score       Int       @default(0)
+  team_away             Team      @relation("team_away", fields: [team_away_id], references: [id])
+  team_away_id          String
+  team_away_probability Int       @default(0)
+  team_away_score       Int       @default(0)
+  draw_probability      Int       @default(0)
+  Bet                   Bet[]
 }
 
 model Team {
-  id String @id @default(uuid())
-
+  id          String  @id @default(uuid())
   name        String
-  team_api_id String @unique
-
-  Score_Team Score_Team[]
+  team_api_id String  @unique
+  Matchhome   Match[] @relation("team_home")
+  Matchaway   Match[] @relation("team_away")
 }
