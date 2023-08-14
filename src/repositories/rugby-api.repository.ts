@@ -33,7 +33,7 @@ export type Match = {
 };
 
 
-const API_KEY = 'edvqsz4a6y58vznyjy5qernh';
+const API_KEY = 'bq4sbab5pxah625uhqy667ns';
 const API_URL = 'https://api.sportradar.com/rugby-union/trial/v3/en';
 const urn_season = 'sr:season:72847';
 
@@ -66,7 +66,7 @@ async function fetchMatches(): Promise<Match[]> {
     console.log("====================================");
 
     //sleep during 1 second
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1200));
 
     const probabilitiesResponse = await axios.get(`${API_URL}/seasons/${urn_season}/probabilities.json?api_key=${API_KEY}`);
     const data2 = probabilitiesResponse.data;
