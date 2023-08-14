@@ -3,7 +3,7 @@ import UserRoute from './user.route';
 import GroupRoute from './group.route';
 import MatchRoute from './match.route';
 import BetRoute from './bet.route';
-import rugbyApiService from '../services/rugby-api.service';
+import TestRoute from './test.route';
 
 // Import route
 
@@ -15,6 +15,6 @@ router.use('/user', UserRoute);
 router.use('/group', GroupRoute);
 router.use('/match', MatchRoute);
 router.use('/bet', BetRoute);
-router.get('/matches', rugbyApiService.fetchMatches);
+router.use('/test', TestRoute)
 
 export default router;
