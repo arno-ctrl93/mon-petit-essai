@@ -55,12 +55,31 @@ async function patchUser(userDto: UserInboundDto) {
         throw error;
     }
 }
-    
+
+async function getUserScore(userId: string) {
+    console.log("UserService - getUserScore");
+
+    const userEntity: UserEntity = await userRepository.getUserWithBetMatchTeam(userId).catch((error) => {
+        console.log(error);
+        throw error;
+    });
+
+    userEntity.removeBetNotOver();
+
+    console.log(userEntity);
+
+    const score: number = userEntity.getScoreBet();
+
+    return score;
+
+}
+
 
 
 export default {
     postUser,
     getUser,
     deleteUser,
-    patchUser
+    patchUser,
+    getUserScore
 }
