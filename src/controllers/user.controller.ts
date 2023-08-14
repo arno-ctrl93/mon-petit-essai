@@ -94,11 +94,27 @@ async function patchUser(req: Request, res: Response) {
 
 }
 
+async function getUserScore(req: Request, res: Response) {
+    console.log("UserController - getUserScore");
+
+    const email = req.params.email;
+    try {
+        const score = await userService.getUserScore(email);
+        console.log(score);
+        res.status(200).send("User score: " + score + " points");
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+}
+
 
 
 export default {
     postUser,
     getUser,
     deleteUser,
-    patchUser
+    patchUser,
+    getUserScore
 }

@@ -1,5 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
-import UserEntity from "../objects/entities/user.entity";
+import UserEntity, { UserWithGroupAndBets } from "../objects/entities/user.entity";
 import { UserInboundDto } from "../objects/dtos/inbound/user.inbound.dto";
 
 const prisma = new PrismaClient();
@@ -120,11 +120,50 @@ async function joinGroup(userId: string, groupId: string) {
   }
 }
 
+async function getUserWithBetMatchTeam(userEmail: string) {
+  console.log("UserRepository - getUserWithBetMatchTeam");
+
+  try {
+    const user: UserWithGroupAndBets | null = await prisma.user.findUnique({
+      where: {
+        email: userEmail
+      },
+      include: {
+        group: true,
+        bets: {
+          include: {
+            match: {
+              include: {
+                team_away: true,
+                team_home: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    console.log(user);
+
+    if (user == null) {
+      throw new Error("UserRepository - getUserWithBetMatchTeam - user not found");
+    }
+
+    const userEntity: UserEntity = UserEntity.toEntity(user);
+    return userEntity;
+  }
+  catch (error) {
+    console.log(error);
+    throw new Error("UserRepository - getUserWithBetMatchTeam - error");
+  }
+}
+
 
 export default {
   postUser,
   getUser,
   deleteUser,
   patchUser,
-  joinGroup
+  joinGroup,
+  getUserWithBetMatchTeam
 }
