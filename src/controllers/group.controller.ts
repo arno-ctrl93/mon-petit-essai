@@ -19,7 +19,7 @@ async function createGroup(req: Request, res: Response) {
     if (errors.length > 0) {
         console.log("GroupController - createGroup - errors");
         console.log(errors);
-        res.status(400).send(errors);
+        res.status(400).json(errors);
         return;
     }
 
@@ -32,7 +32,7 @@ async function createGroup(req: Request, res: Response) {
 
     catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 }
 
@@ -49,7 +49,7 @@ async function joinGroup(req: Request, res: Response) {
     if (errors.length > 0) {
         console.log("GroupController - createGroup - errors");
         console.log(errors);
-        res.status(400).send(errors);
+        res.status(400).json(errors);
         return;
     }
 
@@ -60,7 +60,7 @@ async function joinGroup(req: Request, res: Response) {
 
     catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 }
 
