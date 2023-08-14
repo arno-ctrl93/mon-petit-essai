@@ -175,7 +175,7 @@ async function updateEndedMatches() {
             });
         }
         // wait between each call to rugby api
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 1200));
     }
 
 
