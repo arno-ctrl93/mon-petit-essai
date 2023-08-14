@@ -1,7 +1,7 @@
 
 import TeamEntity from "../objects/entities/team.entity";
 import matchRepository from "../repositories/match.repository";
-import { Match } from "../repositories/rugby-api.repository";
+import rugbyApiRepository, { Match, MatchEventStat } from "../repositories/rugby-api.repository";
 import rugbyApiService from "./rugby-api.service";
 import teamRepository from "../repositories/team.repository";
 import MatchEntity from "../objects/entities/match.entity";
@@ -129,8 +129,63 @@ async function fetchAndCreateOrUpdateMatches() {
     });
 }
 
+async function fetchTodayPastAndNotClosedMatches() {
+    console.log("MatchService - fetchTodayPastAndNotClosedMatches");
+
+    const matches: MatchEntity[] = await matchRepository.fetchTodayPastAndNotClosedMatches().catch((error) => {
+        console.log(error);
+        throw error;
+    });
+
+    return matches;
+}
+
+async function closeMatches(matchEventStats: MatchEventStat[]) {
+    console.log("MatchService - updateMatches");
+
+    for (const matchEventStat of matchEventStats) {
+        await matchRepository.closeMatch(matchEventStat).catch((error) => {
+            console.log(error);
+            throw error;
+        });
+    }
+}
+
+async function updateEndedMatches() {
+    console.log("MatchService - updateEndedMatches");
+
+    const matches: MatchEntity[] = await fetchTodayPastAndNotClosedMatches().catch((error) => {
+        console.log(error);
+        throw error;
+    });
+
+    for (const match of matches) {
+        const matchEventStat: MatchEventStat = await rugbyApiRepository.getMatchStatusById(match.getApiId()).catch((error) => {
+            console.log(error);
+            throw error;
+        });
+
+        console.log("Match event stat : " + JSON.stringify(matchEventStat))
+
+        if (matchEventStat.is_ended) {
+            console.log("MatchService - fetchTodayPastAndNotClosedMatches - match is ended");
+            await matchRepository.closeMatch(matchEventStat).catch((error) => {
+                console.log(error);
+                throw error;
+            });
+        }
+        // wait between each call to rugby api
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+
+
+}
+
 
 export default {
     fetchAndCreateOrUpdateMatches,
-    createOrUpdateMatches
+    createOrUpdateMatches,
+    fetchTodayPastAndNotClosedMatches,
+    updateEndedMatches,
+    closeMatches
 }

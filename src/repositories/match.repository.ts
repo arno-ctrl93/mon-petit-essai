@@ -1,6 +1,6 @@
 import { Match, PrismaClient } from "@prisma/client";
 import MatchEntity, { MatchWithTeams } from "../objects/entities/match.entity";
-import { Match as MatchJson } from "./rugby-api.repository";
+import { MatchEventStat, Match as MatchJson } from "./rugby-api.repository";
 import TeamEntity from "../objects/entities/team.entity";
 const prisma = new PrismaClient();
 
@@ -104,10 +104,74 @@ async function updateTeamsMatch(matchEntity: MatchEntity, teamHomeEntity: TeamEn
     }
 }
 
+async function fetchTodayPastAndNotClosedMatches() {
+    console.log("MatchRepository - fetchTodayPastAndNotClosedMatches");
+
+    // i want the matches that are not closed and started + time of a regualar rugby match before now
+    const now: Date = new Date();
+    console.log(now);
+    const timeOfRegularRugbyMatch: number = 1000 * 60 * 95; // 80 minutes + 10 minutes of break + 5 minutes of extra time
+    const timeOfRegularRugbyMatchBeforeNow: Date = new Date(now.getTime() - timeOfRegularRugbyMatch);
+    console.log(timeOfRegularRugbyMatchBeforeNow);
+
+    try {
+        const matches: Match[] | null = await prisma.match.findMany({
+            where: {
+                started_at: {
+                    lte: timeOfRegularRugbyMatchBeforeNow
+                },
+                closed_at: {
+                    equals: null
+                }
+            },
+        });
+
+        if (matches == null) {
+            return [];
+        }
+
+        console.log(matches);
+
+        const matchesEntity: MatchEntity[] = matches.map((match: Match) => {
+            return MatchEntity.toEntity(match);
+        });
+
+        return matchesEntity;
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+async function closeMatch(matchEventStat: MatchEventStat) {
+    console.log("MatchRepository - closeMatch");
+
+    try {
+        const match: Match = await prisma.match.update({
+            where: {
+                event_api_id: matchEventStat.api_id
+            },
+            data: {
+                closed_at: new Date(),
+                team_home_score: matchEventStat.home_score,
+                team_away_score: matchEventStat.away_score
+            }
+        });
+
+        console.log("closed match: " + match);
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 
 export default {
     getMatchByApiIdOrNull,
     createMatch,
     updateProbabilityMatch,
-    updateTeamsMatch
+    updateTeamsMatch,
+    fetchTodayPastAndNotClosedMatches,
+    closeMatch
 }

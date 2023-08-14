@@ -13,6 +13,7 @@ export type MatchWithTeams = Prisma.MatchGetPayload<typeof matchWithTeams>;
 
 export default class MatchEntity {
     private readonly id: string;
+    private readonly apiId: string;
     private round: string;
     private startedAt: Date;
     private closedAt: Date | null;
@@ -28,6 +29,7 @@ export default class MatchEntity {
     public static toEntity(match: MatchWithTeams): MatchEntity {
         const matchEntity = new MatchEntity(
             match.id,
+            match.event_api_id,
             match.round,
             match.started_at,
             match.closed_at,
@@ -49,8 +51,9 @@ export default class MatchEntity {
         return matchEntity;
     }
 
-    constructor(id: string, round: string, startedAt: Date, closedAt: Date | null, scoreHome: number, scoreAway: number, probabilityHome: number, probabilityAway: number, probabilityDraw: number) {
+    constructor(id: string, apiId: string, round: string, startedAt: Date, closedAt: Date | null, scoreHome: number, scoreAway: number, probabilityHome: number, probabilityAway: number, probabilityDraw: number) {
         this.id = id;
+        this.apiId = apiId;
         this.round = round;
         this.startedAt = startedAt;
         this.closedAt = closedAt;
@@ -65,6 +68,10 @@ export default class MatchEntity {
 
     getId(): string {
         return this.id;
+    }
+
+    getApiId(): string {
+        return this.apiId;
     }
 
     getRound(): string {
