@@ -96,6 +96,7 @@ async function createOrUpdateMatches(matches: Match[]) {
         if (matchEntity.getProbabilityHome() != match.probability.firstTeam
             || matchEntity.getProbabilityAway() != match.probability.secondTeam
             || matchEntity.getProbabilityDraw() != match.probability.draw) {
+            console.log("MatchService - fetchAndCreateOrUpdateMatches - match probability changed");
             await matchRepository.updateProbabilityMatch(match, matchEntity).catch((error) => {
                 console.log(error);
                 throw error;
@@ -104,6 +105,7 @@ async function createOrUpdateMatches(matches: Match[]) {
 
         if (matchEntity.getTeamHome()?.getApiId() != match.firstTeam.firstTeamId
             || matchEntity.getTeamAway()?.getApiId() != match.secondTeam.secondTeamId) {
+            console.log("MatchService - fetchAndCreateOrUpdateMatches - match teams changed");
             await updateTeamsMatch(match, matchEntity).catch((error) => {
                 console.log(error);
                 throw error;
