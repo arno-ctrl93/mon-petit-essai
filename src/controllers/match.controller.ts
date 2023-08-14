@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import matchService from "../services/match.service";
+import MatchEntity from "../objects/entities/match.entity";
+import FetchPastLiveUpcomingMatchesOutboundDto from "../objects/dtos/outbound/fetch-past-live-upcoming-matches.outbound.dto";
 
 
 
@@ -39,8 +41,24 @@ async function updateEndedMatches(req: Request, res: Response) {
     }
 }
 
+async function fetchPastLiveUpcomingMatches(req: Request, res: Response) {
+    console.log("MatchController - fetchPastLiveUpcomingMatches");
+
+    const userEmail = req.params.email;
+
+    try {
+        const matches: MatchEntity[] = await matchService.fetchMatchesWithBet(userEmail);
+        const dto: FetchPastLiveUpcomingMatchesOutboundDto = FetchPastLiveUpcomingMatchesOutboundDto.toDto(matches);
+        res.status(200).send(dto);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+}
+
 export default {
     fetchAndCreateOrUpdateMatches,
     fetchTodayPastAndNotClosedMatches,
     updateEndedMatches,
+    fetchPastLiveUpcomingMatches
 }

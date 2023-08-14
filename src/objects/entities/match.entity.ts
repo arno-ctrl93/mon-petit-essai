@@ -1,5 +1,6 @@
 import { Match, Prisma } from "@prisma/client";
 import TeamEntity from "./team.entity";
+import BetEntity from "./bet.entity";
 
 const matchWithTeams = Prisma.validator<Prisma.MatchArgs>()({
     include: {
@@ -8,8 +9,17 @@ const matchWithTeams = Prisma.validator<Prisma.MatchArgs>()({
     }
 });
 
+const matchWithBets = Prisma.validator<Prisma.MatchArgs>()({
+    include: {
+        Bet: true
+    }
+});
+
 export type MatchWithTeams = Prisma.MatchGetPayload<typeof matchWithTeams>;
 
+export type MatchWithBets = Prisma.MatchGetPayload<typeof matchWithBets>;
+
+export type MatchWithTeamsAndBets = Prisma.MatchGetPayload<typeof matchWithTeams> & Prisma.MatchGetPayload<typeof matchWithBets>;
 
 export default class MatchEntity {
     private readonly id: string;
@@ -19,6 +29,7 @@ export default class MatchEntity {
     private closedAt: Date | null;
     private teamHome: TeamEntity | null;
     private teamAway: TeamEntity | null;
+    private bets: BetEntity[] | null;
     private scoreHome: number;
     private scoreAway: number;
     private probabilityHome: number;
@@ -26,7 +37,8 @@ export default class MatchEntity {
     private probabilityDraw: number;
 
     public static toEntity(match: Match): MatchEntity;
-    public static toEntity(match: MatchWithTeams): MatchEntity {
+    public static toEntity(match: MatchWithTeams): MatchEntity;
+    public static toEntity(match: MatchWithTeamsAndBets): MatchEntity {
         const matchEntity = new MatchEntity(
             match.id,
             match.event_api_id,
@@ -48,6 +60,12 @@ export default class MatchEntity {
             matchEntity.teamAway = TeamEntity.toEntity(match.team_away);
         }
 
+        if (match.Bet != null) {
+            matchEntity.bets = match.Bet.map((bet) => {
+                return BetEntity.toEntity(bet);
+            });
+        }
+
         return matchEntity;
     }
 
@@ -59,6 +77,7 @@ export default class MatchEntity {
         this.closedAt = closedAt;
         this.teamHome = null;
         this.teamAway = null;
+        this.bets = null;
         this.scoreHome = scoreHome;
         this.scoreAway = scoreAway;
         this.probabilityHome = probabilityHome;
@@ -112,5 +131,13 @@ export default class MatchEntity {
 
     getProbabilityDraw(): number {
         return this.probabilityDraw;
+    }
+
+    // only if you do a join with userId between bet to have only one bet by match
+    getFirstBet(): BetEntity | null {
+        if (this.bets == null) {
+            return null;
+        }
+        return this.bets[0];
     }
 }

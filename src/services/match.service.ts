@@ -5,6 +5,8 @@ import rugbyApiRepository, { Match, MatchEventStat } from "../repositories/rugby
 import rugbyApiService from "./rugby-api.service";
 import teamRepository from "../repositories/team.repository";
 import MatchEntity from "../objects/entities/match.entity";
+import UserEntity from "../objects/entities/user.entity";
+import userRepository from "../repositories/user.repository";
 
 
 async function createMatch(match: Match) {
@@ -181,11 +183,28 @@ async function updateEndedMatches() {
 
 }
 
+export async function fetchMatchesWithBet(userEmail: string) {
+    console.log("MatchService - fetchPastLiveUpcomingMatches");
+
+    const userEntity: UserEntity = await userRepository.getUser(userEmail).catch((error) => {
+        console.log(error);
+        throw error;
+    });
+
+    const matches: MatchEntity[] = await matchRepository.fetchMatchesWithBetsByUserId(userEntity.getId()).catch((error) => {
+        console.log(error);
+        throw error;
+    });
+
+    return matches;
+}
+
 
 export default {
     fetchAndCreateOrUpdateMatches,
     createOrUpdateMatches,
     fetchTodayPastAndNotClosedMatches,
     updateEndedMatches,
-    closeMatches
+    closeMatches,
+    fetchMatchesWithBet
 }
