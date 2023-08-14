@@ -15,6 +15,6 @@ router.use('/user', UserRoute);
 router.use('/group', GroupRoute);
 router.use('/match', MatchRoute);
 router.use('/bet', BetRoute);
-router.use('/test', TestRoute)
+router.use('/test', TestRoute);
 
 export default router;

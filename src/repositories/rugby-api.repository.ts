@@ -2,6 +2,17 @@ import axios from 'axios';
 import { Request, Response } from 'express';
 
 
+// Match France Australie match amical -> sr:sport_event:42027171
+// Match done Japon Nouvelle-Zélande -> sr:sport_event:41307783
+
+export type MatchEventStat = {
+    api_id: string;
+    is_ended: boolean;
+    home_score: number;
+    away_score: number;
+};
+
+
 export type Match = {
     id: string;
     startTime: string;
@@ -27,7 +38,10 @@ const API_URL = 'https://api.sportradar.com/rugby-union/trial/v3/en';
 const urn_season = 'sr:season:72847';
 
 async function fetchMatches(): Promise<Match[]> {
-    const summariesResponse = await axios.get(`${API_URL}/seasons/${urn_season}/summaries.json?api_key=${API_KEY}`);
+    const summariesResponse = await axios.get(`${API_URL}/seasons/${urn_season}/summaries.json?api_key=${API_KEY}`).catch((error) => {
+        console.log(error);
+        throw error;
+    });
     const data = summariesResponse.data;
     console.log("Match find length: " + data.summaries.length);
     let matches: Match[] = [];
@@ -69,6 +83,34 @@ async function fetchMatches(): Promise<Match[]> {
     return matches;
 }
 
+async function getMatchStatusById(eventApiId: string): Promise<MatchEventStat> {
+    console.log("MatchRepository - getMatchById");
+    const summariesResponse = await axios.get(`${API_URL}/sport_events/${eventApiId}/summary.json?api_key=${API_KEY}`).catch((error) => {
+        console.log(error);
+        throw error;
+    });
+    const data = summariesResponse.data;
+    const apiId = data.sport_event.id;
+    const isEnded = data.sport_event_status.match_status === "ended";
+    if (!isEnded) {
+        return {
+            api_id: apiId,
+            is_ended: false,
+            home_score: 0,
+            away_score: 0
+        }
+    }
+    const homeScore = data.sport_event_status.home_score;
+    const awayScore = data.sport_event_status.away_score;
+    return {
+        api_id: apiId,
+        is_ended: true,
+        home_score: homeScore,
+        away_score: awayScore
+    }
+}
+
 export default {
-    fetchMatches
+    fetchMatches,
+    getMatchStatusById
 }
