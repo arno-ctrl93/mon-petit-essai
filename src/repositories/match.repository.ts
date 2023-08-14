@@ -1,5 +1,5 @@
 import { Match, PrismaClient } from "@prisma/client";
-import MatchEntity, { MatchWithTeams } from "../objects/entities/match.entity";
+import MatchEntity, { MatchWithBets, MatchWithTeams, MatchWithTeamsAndBets } from "../objects/entities/match.entity";
 import { MatchEventStat, Match as MatchJson } from "./rugby-api.repository";
 import TeamEntity from "../objects/entities/team.entity";
 const prisma = new PrismaClient();
@@ -166,6 +166,67 @@ async function closeMatch(matchEventStat: MatchEventStat) {
     }
 }
 
+async function fetchMatchesWithBetsByUserId(userId: string) {
+    console.log("MatchRepository - fetchPastLiveUpcomingMatches");
+
+    // need to translate this sql query to prismas query language
+    // select * from public."Match" m
+    // left join public."Bet" b on b.match_id = m.id and b.user_id = '02c20d39-b522-4584-bb95-d64c231b8a98'
+
+    const matches: MatchWithTeamsAndBets[] | null = await prisma.match.findMany({
+        select: {
+            team_home: {
+                select: {
+                    id: true,
+                    name: true,
+                    team_api_id: true,
+                },
+            },
+            team_away: {
+                select: {
+                    id: true,
+                    name: true,
+                    team_api_id: true,
+                },
+            },
+            Bet: {
+                select: {
+                    id: true,
+                    user_id: true,
+                    match_id: true,
+                    bet_team_away: true,
+                    bet_team_home: true,
+                },
+                where: {
+                    user_id: userId
+                }
+            },
+            id: true,
+            event_api_id: true,
+            team_home_score: true,
+            team_away_score: true,
+            team_away_id: true,
+            team_home_id: true,
+            team_home_probability: true,
+            team_away_probability: true,
+            draw_probability: true,
+            started_at: true,
+            round: true,
+            closed_at: true,
+
+        },
+        orderBy: {
+            started_at: 'asc'
+        }
+    });
+
+    const matchEntities: MatchEntity[] = matches.map((match: MatchWithTeamsAndBets) => {
+        return MatchEntity.toEntity(match);
+    });
+
+    return matchEntities;
+}
+
 
 export default {
     getMatchByApiIdOrNull,
@@ -173,5 +234,6 @@ export default {
     updateProbabilityMatch,
     updateTeamsMatch,
     fetchTodayPastAndNotClosedMatches,
-    closeMatch
+    closeMatch,
+    fetchMatchesWithBetsByUserId
 }
