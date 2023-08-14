@@ -32,7 +32,7 @@ model Group {
 
 model Bet {
   id            String @id @default(uuid())
-  user_id       String
+  user_id       String 
   user          User   @relation(fields: [user_id], references: [id])
   match_id      String
   match         Match  @relation(fields: [match_id], references: [id])
