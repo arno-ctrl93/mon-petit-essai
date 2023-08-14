@@ -3,15 +3,23 @@ import UserEntity from "./user.entity";
 import MatchEntity from "./match.entity";
 
 
-const betWithUserAndMatch = Prisma.validator<Prisma.BetArgs>()({
+const betWithMatch = Prisma.validator<Prisma.BetArgs>()({
     include: {
-        user: true,
         match: true
     }
 });
 
-export type BetWithUserAndMatch = Prisma.BetGetPayload<typeof betWithUserAndMatch>;
+const betWithUser = Prisma.validator<Prisma.BetArgs>()({
+    include: {
+        user: true
+    }
+});
 
+export type BetWithMatch = Prisma.BetGetPayload<typeof betWithMatch>;
+
+export type BetWithUser = Prisma.BetGetPayload<typeof betWithUser>;
+
+export type BetWithUserAndMatch = Prisma.BetGetPayload<typeof betWithUser> & Prisma.BetGetPayload<typeof betWithMatch>;
 
 export default class BetEntity {
     private readonly id: string;
@@ -25,6 +33,7 @@ export default class BetEntity {
 
 
     public static toEntity(bet: Bet): BetEntity;
+    public static toEntity(bet: BetWithMatch): BetEntity;
     public static toEntity(bet: BetWithUserAndMatch): BetEntity {
         const betEntity = new BetEntity(
             bet.id,
@@ -70,6 +79,40 @@ export default class BetEntity {
 
     public getBetAwayTeam(): number {
         return this.betAwayTeam;
+    }
+
+    public getScore(): number {
+        if (this.match == null)
+            return 0;
+        // team home win and predict team home win
+        if (this.match.getScoreHome() > this.match.getScoreAway() && this.betHomeTeam > this.betAwayTeam) {
+            if (this.match.getScoreHome() == this.betHomeTeam && this.match.getScoreAway() == this.betAwayTeam) {
+                console.log("perfect prediction : team home win");
+                return this.match.getProbabilityHome() * 2;
+            }
+            console.log("good prediction : team home win");
+            return this.match.getProbabilityHome();
+        }
+        // team away win and predict team away win
+        if (this.match.getScoreHome() < this.match.getScoreAway() && this.betHomeTeam < this.betAwayTeam) {
+            if (this.match.getScoreHome() == this.betHomeTeam && this.match.getScoreAway() == this.betAwayTeam) {
+                console.log("perfect prediction : team away win");
+                return this.match.getProbabilityAway() * 2;
+            }
+            console.log("good prediction : team away win");
+            return this.match.getProbabilityAway();
+        }
+        // draw and predict draw
+        if (this.match.getScoreHome() == this.match.getScoreAway() && this.betHomeTeam == this.betAwayTeam) {
+            if (this.match.getScoreHome() == this.betHomeTeam && this.match.getScoreAway() == this.betAwayTeam) {
+                console.log("perfect prediction : draw");
+                return this.match.getProbabilityDraw() * 2;
+            }
+            console.log("good prediction : draw");
+            return this.match.getProbabilityDraw();
+        }
+        console.log("bad prediction");
+        return 0;
     }
 
 }
