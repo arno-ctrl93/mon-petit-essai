@@ -14,7 +14,7 @@ async function createOrUpdateBet(req: Request, res: Response) {
     if (errors.length > 0) {
         console.log("BetController - createOrUpdateBet - errors");
         console.log(errors);
-        res.status(400).send(errors);
+        res.status(400).json(errors);
         return;
     }
 
@@ -23,7 +23,7 @@ async function createOrUpdateBet(req: Request, res: Response) {
         res.status(200).send('bet created or updated');
     } catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 }
 

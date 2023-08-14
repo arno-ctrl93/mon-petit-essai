@@ -19,7 +19,7 @@ async function postUser(req: Request, res: Response) {
     if (errors.length > 0) {
         console.log("UserController - postUser - errors");
         console.log(errors);
-        res.status(400).send(errors);
+        res.status(400).json(errors);
         return;
     }
 
@@ -29,7 +29,7 @@ async function postUser(req: Request, res: Response) {
     }
     catch (error) {
         console.log(error);
-        res.status(401).send(error);
+        res.status(401).json(error);
     }
 }
 
@@ -47,11 +47,11 @@ async function getUser(req: Request, res: Response) {
 
     catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 }
 
-async function deleteUser(req: Request, res: Response){
+async function deleteUser(req: Request, res: Response) {
     console.log("UserController - deleteUser");
     console.log(req.params.email);
 
@@ -59,18 +59,18 @@ async function deleteUser(req: Request, res: Response){
     try {
         const user = await userService.deleteUser(email);
         console.log(user);
-    res.status(200).send('User deleted');
-    }   
+        res.status(200).send('User deleted');
+    }
 
     catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json(error);
 
     }
 
 }
 
-async function patchUser(req: Request, res: Response){
+async function patchUser(req: Request, res: Response) {
     console.log("UserController - patchUser");
 
     const userDto: UserInboundDto = new UserInboundDto(req.body.name, req.body.email);
@@ -79,7 +79,7 @@ async function patchUser(req: Request, res: Response){
     if (errors.length > 0) {
         console.log("UserController - patchUser - errors");
         console.log(errors);
-        res.status(400).send(errors);
+        res.status(400).json(errors);
         return;
     }
 
@@ -89,7 +89,7 @@ async function patchUser(req: Request, res: Response){
     }
     catch (error) {
         console.log(error);
-        res.status(401).send(error);
+        res.status(401).json(error);
     }
 
 }

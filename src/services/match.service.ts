@@ -63,54 +63,72 @@ async function updateTeamsMatch(match: Match, matchEntity: MatchEntity) {
     }
 }
 
+async function createOrUpdateMatches(matches: Match[]) {
 
-async function fetchAndCreateOrUpdateMatches() {
-    console.log("MatchService - fetchAndCreateOrUpdateMatches");
+    const now = new Date();
 
-    try {
-        const matches: Match[] = await rugbyApiService.fetchMatches();
-        const now = new Date();
+    for (const match of matches) {
 
-        for (const match of matches) {
-
-            // compare startTime String to now String
-            const matchDate = new Date(match.startTime);
-            if (matchDate < now) {
-                console.log("MatchService - fetchAndCreateOrUpdateMatches - match already started");
-                continue;
-            }
-
-            // check if match already exists
-            const matchEntity = await matchRepository.getMatchByApiIdOrNull(match.id);
-            if (matchEntity == null) {
-                console.log("MatchService - fetchAndCreateOrUpdateMatches - match doesn't exist");
-                await createMatch(match);
-                continue;
-            }
-
-            console.log("MatchService - fetchAndCreateOrUpdateMatches - match already exists");
-            // patch if value changed
-
-            if (matchEntity.getProbabilityHome() != match.probability.firstTeam
-                || matchEntity.getProbabilityAway() != match.probability.secondTeam
-                || matchEntity.getProbabilityDraw() != match.probability.draw) {
-                await matchRepository.updateProbabilityMatch(match, matchEntity);
-            }
-
-            if (matchEntity.getTeamHome()?.getApiId() != match.firstTeam.firstTeamId
-                || matchEntity.getTeamAway()?.getApiId() != match.secondTeam.secondTeamId) {
-                await updateTeamsMatch(match, matchEntity);
-            }
-
+        // compare startTime String to now String
+        const matchDate = new Date(match.startTime);
+        if (matchDate < now) {
+            console.log("MatchService - fetchAndCreateOrUpdateMatches - match already started");
+            continue;
         }
-    }
-    catch (error) {
-        console.log(error);
-        throw error;
+
+        // check if match already exists
+        const matchEntity = await matchRepository.getMatchByApiIdOrNull(match.id).catch((error) => {
+            console.log(error);
+            throw error;
+        });
+        if (matchEntity == null) {
+            console.log("MatchService - fetchAndCreateOrUpdateMatches - match doesn't exist");
+            await createMatch(match).catch((error) => {
+                console.log(error);
+                throw error;
+            });
+            continue;
+        }
+
+        console.log("MatchService - fetchAndCreateOrUpdateMatches - match already exists");
+        // patch if value changed
+
+        if (matchEntity.getProbabilityHome() != match.probability.firstTeam
+            || matchEntity.getProbabilityAway() != match.probability.secondTeam
+            || matchEntity.getProbabilityDraw() != match.probability.draw) {
+            await matchRepository.updateProbabilityMatch(match, matchEntity).catch((error) => {
+                console.log(error);
+                throw error;
+            });
+        }
+
+        if (matchEntity.getTeamHome()?.getApiId() != match.firstTeam.firstTeamId
+            || matchEntity.getTeamAway()?.getApiId() != match.secondTeam.secondTeamId) {
+            await updateTeamsMatch(match, matchEntity).catch((error) => {
+                console.log(error);
+                throw error;
+            });
+        }
+
     }
 }
 
 
+async function fetchAndCreateOrUpdateMatches() {
+    console.log("MatchService - fetchAndCreateOrUpdateMatches");
+    const matches: Match[] = await rugbyApiService.fetchMatches().catch((error) => {
+        console.log(error);
+        throw error;
+    });
+
+    await createOrUpdateMatches(matches).catch((error) => {
+        console.log(error);
+        throw error;
+    });
+}
+
+
 export default {
-    fetchAndCreateOrUpdateMatches
+    fetchAndCreateOrUpdateMatches,
+    createOrUpdateMatches
 }

@@ -11,7 +11,7 @@ async function fetchAndCreateOrUpdateMatches(req: Request, res: Response) {
         res.status(200).send('matches created or updated');
     } catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        res.status(400).json(error);
     }
 }
 
