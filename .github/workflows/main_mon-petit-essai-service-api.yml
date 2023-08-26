@@ -16,14 +16,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # juste want to print the value of the secret and decode it
-    - name: Print the value of the secret
-      run: echo ${{ secrets.AzureAppService_ContainerPassword_bb3c47367e414dfb8de7e25796e1aaaf }}
-
-    - name: Decode the secret
-      run: echo ${{ secrets.AzureAppService_ContainerPassword_bb3c47367e414dfb8de7e25796e1aaaf }} | base64 --decode
-
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
