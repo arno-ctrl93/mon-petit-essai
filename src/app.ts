@@ -41,25 +41,25 @@ app.get('/authorized', (req, res) => {
     res.send('Secured Resource');
 });
 
-// schedule tasks to be run on the server
-// scheduler.scheduleTask({
-//     "id": "update-match-each-night",
-//     "cronExpression": "0 */12 * * *",
-//     action: async () => {
-//         console.log('fetch and create or update matches');
-//         await matchService.fetchAndCreateOrUpdateMatches();
-//     },
-// });
+schedule tasks to be run on the server
+scheduler.scheduleTask({
+    "id": "update-match-each-night",
+    "cronExpression": "0 */12 * * *",
+    action: async () => {
+        console.log('fetch and create or update matches');
+        await matchService.fetchAndCreateOrUpdateMatches();
+    },
+});
 
 
-// scheduler.scheduleTask({
-//     "id": "update-ended-match-each-5-minutes",
-//     "cronExpression": "*/5 8-23 * * *",
-//     action: async () => {
-//         console.log('update ended matches');
-//         await matchService.updateEndedMatches();
-//     },
-// });
+scheduler.scheduleTask({
+    "id": "update-ended-match-each-5-minutes",
+    "cronExpression": "*/5 8-23 * * *",
+    action: async () => {
+        console.log('update ended matches');
+        await matchService.updateEndedMatches();
+    },
+});
 
 // scheduler test
 // scheduler.scheduleTask({
