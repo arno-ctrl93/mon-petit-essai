@@ -48,4 +48,4 @@ jobs:
         app-name: 'mon-petit-essai-service-api'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_d71450967bc84cebb8decb0f8fbc72b8 }}
-        images: 'arno93/ghderte-service-api:${{ github.sha }}'
+        images: 'ghderte-service-api:${{ github.sha }}'
