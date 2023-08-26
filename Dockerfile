@@ -5,6 +5,8 @@ COPY package*.json  ./
 
 COPY . .
 
+ENV DATABASE_URL="jdbc:postgresql://db-prod-mon-petit-essai.postgres.database.azure.com:5432/postgres?user=chabal@db-prod-mon-petit-essai&password=esposito28!&sslmode=require"
+
 RUN ls
 
 RUN npm ci
