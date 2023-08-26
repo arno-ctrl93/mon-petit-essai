@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/v1/arno93/ghderte-service-api:${{ github.sha }}
+        tags: arno93/ghderte-service-api:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
