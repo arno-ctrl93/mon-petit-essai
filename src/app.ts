@@ -41,7 +41,7 @@ app.get('/authorized', (req, res) => {
     res.send('Secured Resource');
 });
 
-schedule tasks to be run on the server
+// schedule tasks to be run on the server
 scheduler.scheduleTask({
     "id": "update-match-each-night",
     "cronExpression": "0 */12 * * *",
