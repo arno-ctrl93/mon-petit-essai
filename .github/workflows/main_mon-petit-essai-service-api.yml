@@ -18,7 +18,7 @@ jobs:
 
     # juste want to print the value of the secret
     - name: Print the value of the secret
-      run: echo ${{ secrets.AzureAppService_ContainerUsername_257d1fd45edb4423a90f44c9c8245f62 }}
+      run: echo "${{ secrets.AzureAppService_ContainerUsername_257d1fd45edb4423a90f44c9c8245f62 }}""
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
