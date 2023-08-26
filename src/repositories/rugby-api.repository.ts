@@ -35,7 +35,10 @@ export type Match = {
 
 const API_KEY = 'bq4sbab5pxah625uhqy667ns';
 const API_URL = 'https://api.sportradar.com/rugby-union/trial/v3/en';
-const urn_season = 'sr:season:72847';
+// world cup 2023
+// const urn_season = 'sr:season:72847';
+// match amical international
+const urn_season = 'sr:season:100961';
 
 async function fetchMatches(): Promise<Match[]> {
     const summariesResponse = await axios.get(`${API_URL}/seasons/${urn_season}/summaries.json?api_key=${API_KEY}`).catch((error) => {
