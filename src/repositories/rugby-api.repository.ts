@@ -47,22 +47,30 @@ async function fetchMatches(): Promise<Match[]> {
     });
     const data = summariesResponse.data;
     console.log("Match find length: " + data.summaries.length);
-    let matches: Match[] = [];
+    const matches: Match[] = [];
     for (let i = 0; i < data.summaries.length; i++) {
         const id = data.summaries[i].sport_event.id;
         const startTime = data.summaries[i].sport_event.start_time;
         // console.log(data.summaries[i].sport_event.sport_event_context);
         const stageType = data.summaries[i].sport_event.sport_event_context.stage.type;
-        let stageName: string = "";
+        console.log(stageType)
+        let stageName = "";
         if (stageType === "league") {
-            stageName = "Group " + data.summaries[i].sport_event.sport_event_context.groups[0].group_name + " - J" + data.summaries[i].sport_event.sport_event_context.round.number;
+            if (data.summaries[i].sport_event.sport_event_context.groups === undefined) {
+                stageName = "null";
+            } else {
+                stageName = "Group " + data.summaries[i].sport_event.sport_event_context.groups[0].group_name + " - J" + data.summaries[i].sport_event.sport_event_context.round.number;
+            }
         } else {
+            console.log("test2: " + data.summaries[i].sport_event.sport_event_context.round.name);
             stageName = data.summaries[i].sport_event.sport_event_context.round.name;
         }
         const firstTeamName = data.summaries[i].sport_event.competitors[0].name;
         const firstTeamId = data.summaries[i].sport_event.competitors[0].id;
         const secondTeamName = data.summaries[i].sport_event.competitors[1].name;
         const secondTeamId = data.summaries[i].sport_event.competitors[1].id;
+        console.log("====================================");
+        console.log("id: " + id + " - startTime: " + startTime + " - stageName: " + stageName + " - firstTeamName: " + firstTeamName + " - firstTeamId: " + firstTeamId + " - secondTeamName: " + secondTeamName + " - secondTeamId: " + secondTeamId);
         matches.push({ id, startTime, stageName, firstTeam: { firstTeamName, firstTeamId }, secondTeam: { secondTeamName, secondTeamId }, probability: { firstTeam: 0, secondTeam: 0, draw: 0 } });
     }
 

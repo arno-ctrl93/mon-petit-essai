@@ -80,13 +80,11 @@ async function createOrUpdateMatches(matches: Match[]) {
 
         // check if match already exists
         const matchEntity = await matchRepository.getMatchByApiIdOrNull(match.id).catch((error) => {
-            console.log(error);
             throw error;
         });
         if (matchEntity == null) {
             console.log("MatchService - fetchAndCreateOrUpdateMatches - match doesn't exist");
             await createMatch(match).catch((error) => {
-                console.log(error);
                 throw error;
             });
             continue;
@@ -100,7 +98,6 @@ async function createOrUpdateMatches(matches: Match[]) {
             || matchEntity.getProbabilityDraw() != match.probability.draw) {
             console.log("MatchService - fetchAndCreateOrUpdateMatches - match probability changed");
             await matchRepository.updateProbabilityMatch(match, matchEntity).catch((error) => {
-                console.log(error);
                 throw error;
             });
         }
@@ -109,7 +106,6 @@ async function createOrUpdateMatches(matches: Match[]) {
             || matchEntity.getTeamAway()?.getApiId() != match.secondTeam.secondTeamId) {
             console.log("MatchService - fetchAndCreateOrUpdateMatches - match teams changed");
             await updateTeamsMatch(match, matchEntity).catch((error) => {
-                console.log(error);
                 throw error;
             });
         }
@@ -147,7 +143,6 @@ async function closeMatches(matchEventStats: MatchEventStat[]) {
 
     for (const matchEventStat of matchEventStats) {
         await matchRepository.closeMatch(matchEventStat).catch((error) => {
-            console.log(error);
             throw error;
         });
     }
@@ -163,7 +158,6 @@ async function updateEndedMatches() {
 
     for (const match of matches) {
         const matchEventStat: MatchEventStat = await rugbyApiRepository.getMatchStatusById(match.getApiId()).catch((error) => {
-            console.log(error);
             throw error;
         });
 
@@ -172,7 +166,6 @@ async function updateEndedMatches() {
         if (matchEventStat.is_ended) {
             console.log("MatchService - fetchTodayPastAndNotClosedMatches - match is ended");
             await matchRepository.closeMatch(matchEventStat).catch((error) => {
-                console.log(error);
                 throw error;
             });
         }
