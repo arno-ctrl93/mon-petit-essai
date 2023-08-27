@@ -29,7 +29,10 @@ async function createMatch(match: Match) {
 
 
     try {
+        console.log("MatchService - createMatch - " + match + " - " + teamHomeEntity + " - " + teamAwayEntity);
+        console.log('match probabilities: ' + match.probability.firstTeam + ' - ' + match.probability.secondTeam + ' - ' + match.probability.draw);
         const createdMatch: MatchEntity = await matchRepository.createMatch(match, teamHomeEntity, teamAwayEntity);
+        console.log("MatchService - createMatch - " + createdMatch);
         return createdMatch;
     }
     catch (error) {
@@ -70,6 +73,7 @@ async function createOrUpdateMatches(matches: Match[]) {
     const now = new Date();
 
     for (const match of matches) {
+        console.log('Match : ' + JSON.stringify(match));
 
         // compare startTime String to now String
         const matchDate = new Date(match.startTime);

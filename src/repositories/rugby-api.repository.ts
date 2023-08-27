@@ -84,12 +84,24 @@ async function fetchMatches(): Promise<Match[]> {
     console.log("Match find length: " + data2.sport_event_probabilities.length);
     console.log("probabilities: " + data2.sport_event_probabilities[0].markets[0].outcomes);
     for (let i = 0; i < data2.sport_event_probabilities.length; i++) {
+        const id = data2.sport_event_probabilities[i].sport_event.id;
+        console.log("====================================");
+        console.log("id: " + id);
+        console.log(data2.sport_event_probabilities[i].markets[0])
         const probabilityFirstTeam = 100 - (data2.sport_event_probabilities[i].markets[0].outcomes[0].probability | 0);
         const probabilitySecondTeam = 100 - (data2.sport_event_probabilities[i].markets[0].outcomes[1].probability | 0);
         const probabilityDraw = 100 - (data2.sport_event_probabilities[i].markets[0].outcomes[2].probability | 0);
-        matches[i].probability.firstTeam = probabilityFirstTeam;
-        matches[i].probability.secondTeam = probabilitySecondTeam;
-        matches[i].probability.draw = probabilityDraw;
+        console.log("====================================");
+        console.log("probabilityFirstTeam: " + probabilityFirstTeam + " - probabilitySecondTeam: " + probabilitySecondTeam + " - probabilityDraw: " + probabilityDraw);
+        // i want to update probabilities of match item where id = id
+        const match = matches.find(m => m.id === id);
+        if (match) {
+            match.probability.firstTeam = probabilityFirstTeam;
+            match.probability.secondTeam = probabilitySecondTeam;
+            match.probability.draw = probabilityDraw;
+        }
+        console.log("====================================");
+        console.log(matches[i].probability);
     }
     return matches;
 }
