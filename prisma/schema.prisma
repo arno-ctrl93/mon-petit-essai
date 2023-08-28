@@ -39,6 +39,7 @@ model Bet {
   bet_team_home Int
   bet_team_away Int
   bet_score     Int  @default(0)
+  bet_score_diff Int  @default(1000)
 }
 
 model Match {
