@@ -2,7 +2,9 @@ import { Team } from "@prisma/client";
 
 export default class TeamEntity {
     private readonly id: string;
+    
     private name: string;
+    
     private apiId: string;
 
     public static toEntity(team: Team): TeamEntity {

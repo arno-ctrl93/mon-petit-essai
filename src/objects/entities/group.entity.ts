@@ -3,8 +3,11 @@ import { Group } from "@prisma/client";
 export default class GroupEntity {
 
     private readonly id: string;
+    
     private name: string;
+    
     private uniquePublicId: string;
+    
     private ownerId: string;
 
     public static toEntity(group: Group): GroupEntity {

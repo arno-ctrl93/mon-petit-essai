@@ -1,7 +1,15 @@
 import { Bet, Prisma } from "@prisma/client";
 import UserEntity from "./user.entity";
 import MatchEntity from "./match.entity";
+import { calculateDifferenceBetweenScoreAndBet } from "../../helper/calculate-difference.misc";
 
+
+enum BetScoreResult {
+    WIN = "WIN",
+    LOSE = "LOSE",
+    PERFECT = "PERFECT",
+    CLOSED = "CLOSED"
+}
 
 const betWithMatch = Prisma.validator<Prisma.BetArgs>()({
     include: {
@@ -25,12 +33,16 @@ export default class BetEntity {
     private readonly id: string;
 
     private user: UserEntity | null;
+
     private match: MatchEntity | null;
 
     private betHomeTeam: number;
+
     private betAwayTeam: number;
 
+    private betScore: number;
 
+    private betScoreDiff: number;
 
     public static toEntity(bet: Bet): BetEntity;
     public static toEntity(bet: BetWithMatch): BetEntity;
@@ -38,7 +50,9 @@ export default class BetEntity {
         const betEntity = new BetEntity(
             bet.id,
             bet.bet_team_home,
-            bet.bet_team_away
+            bet.bet_team_away,
+            bet.bet_score,
+            bet.bet_score_diff
         );
 
         if (bet.user != null) {
@@ -51,12 +65,14 @@ export default class BetEntity {
         return betEntity;
     }
 
-    constructor(id: string, betHomeTeam: number, betAwayTeam: number) {
+    constructor(id: string, betHomeTeam: number, betAwayTeam: number, betScore: number, betScoreDiff: number) {
         this.id = id;
         this.user = null;
         this.match = null;
         this.betHomeTeam = betHomeTeam;
         this.betAwayTeam = betAwayTeam;
+        this.betScore = betScore;
+        this.betScoreDiff = betScoreDiff;
     }
 
     // getters and setters
@@ -81,38 +97,82 @@ export default class BetEntity {
         return this.betAwayTeam;
     }
 
-    public getScore(): number {
-        if (this.match == null)
-            return 0;
-        // team home win and predict team home win
-        if (this.match.getScoreHome() > this.match.getScoreAway() && this.betHomeTeam > this.betAwayTeam) {
-            if (this.match.getScoreHome() == this.betHomeTeam && this.match.getScoreAway() == this.betAwayTeam) {
-                console.log("perfect prediction : team home win");
-                return this.match.getProbabilityHome() * 2;
-            }
-            console.log("good prediction : team home win");
-            return this.match.getProbabilityHome();
+    public getBetScore(): number {
+        return this.betScore;
+    }
+
+    public getBetScoreDiff(): number {
+        return this.betScoreDiff;
+    }
+
+    public getBetScoreResult(): BetScoreResult {
+        if (this.betScore === 0) {
+            return BetScoreResult.LOSE;
         }
-        // team away win and predict team away win
-        if (this.match.getScoreHome() < this.match.getScoreAway() && this.betHomeTeam < this.betAwayTeam) {
-            if (this.match.getScoreHome() == this.betHomeTeam && this.match.getScoreAway() == this.betAwayTeam) {
-                console.log("perfect prediction : team away win");
-                return this.match.getProbabilityAway() * 2;
-            }
-            console.log("good prediction : team away win");
-            return this.match.getProbabilityAway();
+        else if (this.betScoreDiff === 0) {
+            return BetScoreResult.PERFECT;
         }
-        // draw and predict draw
-        if (this.match.getScoreHome() == this.match.getScoreAway() && this.betHomeTeam == this.betAwayTeam) {
-            if (this.match.getScoreHome() == this.betHomeTeam && this.match.getScoreAway() == this.betAwayTeam) {
-                console.log("perfect prediction : draw");
-                return this.match.getProbabilityDraw() * 2;
-            }
-            console.log("good prediction : draw");
-            return this.match.getProbabilityDraw();
+        else if (this.betScoreDiff < 7) {
+            return BetScoreResult.CLOSED;
         }
-        console.log("bad prediction");
-        return 0;
+        else {
+            return BetScoreResult.WIN;
+        }
+    }
+
+
+    public setBetScore(): void {
+        if (this.match == null) {
+            throw new Error("BetEntity - setBetScore - match is null");
+        }
+
+        if (this.match.getClosedAt() == null) {
+            throw new Error("BetEntity - setBetScore - match is not closed");
+        }
+
+        const scoreHome = this.match.getScoreHome();
+        const scoreAway = this.match.getScoreAway();
+
+        const matchDiff = calculateDifferenceBetweenScoreAndBet(scoreHome, scoreAway, this.betHomeTeam, this.betAwayTeam);
+
+        if (scoreHome === scoreAway && this.betHomeTeam === this.betAwayTeam){
+            if (matchDiff === 0){
+                this.betScore = this.match.getProbabilityDraw() * 2;
+            }
+            else if (matchDiff < 7){
+                this.betScore = Math.round(this.match.getProbabilityDraw() * 1.5);
+            }
+            else {
+                this.betScore = this.match.getProbabilityDraw();
+            }
+        }
+        else if (scoreHome < scoreAway && this.betHomeTeam < this.betAwayTeam) {
+            if (matchDiff === 0){
+                this.betScore = this.match.getProbabilityAway() * 2;
+            }
+            else if (matchDiff < 7){
+                this.betScore = Math.round(this.match.getProbabilityAway() * 1.5);
+            }
+            else {
+                this.betScore = this.match.getProbabilityAway();
+            }
+
+        }
+        else if (scoreHome > scoreAway && this.betHomeTeam > this.betAwayTeam) {
+            if (matchDiff === 0){
+                this.betScore = this.match.getProbabilityHome() * 2;
+            }
+            else if (matchDiff < 7){
+                this.betScore = Math.round(this.match.getProbabilityHome() * 1.5);
+            }
+            else {
+                this.betScore = this.match.getProbabilityHome();
+            }
+        }
+        else {
+            this.betScore = 0;
+        }
+        this.betScoreDiff = matchDiff;
     }
 
 }

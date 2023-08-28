@@ -1,7 +1,7 @@
 import { CreateGroupInboundDto } from "../objects/dtos/inbound/create-group.inbound.dto";
 import { JoinGroupInboundDto } from "../objects/dtos/inbound/join-group.inbound.dto";
 import UserEntity from "../objects/entities/user.entity";
-import groupRepository from "../repositories/group.repository";
+import groupRepository, { UserGroupJson } from "../repositories/group.repository";
 import userRepository from "../repositories/user.repository";
 import userService from "./user.service";
 
@@ -51,7 +51,21 @@ async function joinGroupByUniqueId(dto: JoinGroupInboundDto) {
     }
 }
 
+async function getLeaderboardGroup(uniqueId: string) {
+    console.log("GroupService - getLeaderboardGroup");
+
+    const leaderboard: UserGroupJson[] = await groupRepository.getLeaderboardGroup(uniqueId).catch(error => {
+        console.log(error);
+        throw error;
+    });
+
+    return leaderboard;
+
+}
+
 export default {
     createGroup,
-    joinGroupByUniqueId
+    joinGroupByUniqueId,
+    getLeaderboardGroup
+
 }

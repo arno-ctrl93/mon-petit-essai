@@ -1,6 +1,6 @@
 import { Bet, PrismaClient } from "@prisma/client";
 import createOrUpdateBetInboundDto from "../objects/dtos/inbound/create-or-update-bet.inbound.dto";
-import BetEntity from "../objects/entities/bet.entity";
+import BetEntity, { BetWithMatch } from "../objects/entities/bet.entity";
 
 const prisma = new PrismaClient();
 
@@ -71,6 +71,28 @@ async function createBet(dto: createOrUpdateBetInboundDto, userId: string, match
     }
 }
 
+async function updateScoreBet(betId: string, score: number, scoreDiff: number) {
+    console.log("BetRepository - updateScoreBet");
+
+    try {
+        await prisma.bet.update({
+            where: {
+                id: betId
+            },
+            data: {
+                bet_score: score,
+                bet_score_diff: scoreDiff
+            }
+
+        });
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
 async function updateBet(dto: createOrUpdateBetInboundDto, betId: string) {
     console.log("BetRepository - updateBet");
 
@@ -97,9 +119,39 @@ async function updateBet(dto: createOrUpdateBetInboundDto, betId: string) {
     }
 }
 
+async function fetchBetByMatchId(matchApiId: string) {
+    console.log("BetRepository - fetchBetByMatchId");
+
+    try {
+        const bets: BetWithMatch[] = await prisma.bet.findMany({
+            where: {
+                match: {
+                    event_api_id: matchApiId
+                },
+            },
+            include: {
+                match: true
+            }
+        });
+
+        const betEntities: BetEntity[] = bets.map((bet) => {
+            return BetEntity.toEntity(bet);
+        });
+
+        return betEntities;
+
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 export default {
     createBet,
     updateBet,
-    getBetByUserAndMatchIdOrNull
+    getBetByUserAndMatchIdOrNull,
+    fetchBetByMatchId,
+    updateScoreBet
 }
 

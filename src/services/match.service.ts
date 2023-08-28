@@ -7,6 +7,8 @@ import teamRepository from "../repositories/team.repository";
 import MatchEntity from "../objects/entities/match.entity";
 import UserEntity from "../objects/entities/user.entity";
 import userRepository from "../repositories/user.repository";
+import betRepository from "../repositories/bet.repository";
+import BetEntity from "../objects/entities/bet.entity";
 
 
 async function createMatch(match: Match) {
@@ -14,14 +16,16 @@ async function createMatch(match: Match) {
 
     const teamHomeEntity: TeamEntity = await teamRepository.getTeamByApiIdOrNull(match.firstTeam.firstTeamId).then(async (team: TeamEntity | null) => {
         if (team == null) {
-            return await teamRepository.createTeam(match.firstTeam.firstTeamName, match.firstTeam.firstTeamId);
+            const createdTeamEntity = await teamRepository.createTeam(match.firstTeam.firstTeamName, match.firstTeam.firstTeamId);
+            return createdTeamEntity;
         }
         return team;
     });
 
     const teamAwayEntity: TeamEntity = await teamRepository.getTeamByApiIdOrNull(match.secondTeam.secondTeamId).then(async (team: TeamEntity | null) => {
         if (team == null) {
-            return await teamRepository.createTeam(match.secondTeam.secondTeamName, match.secondTeam.secondTeamId);
+            const createdTeamEntity = await teamRepository.createTeam(match.secondTeam.secondTeamName, match.secondTeam.secondTeamId);
+            return createdTeamEntity;
         }
         return team;
     });
@@ -46,14 +50,16 @@ async function updateTeamsMatch(match: Match, matchEntity: MatchEntity) {
 
     const teamHomeEntity: TeamEntity = await teamRepository.getTeamByApiIdOrNull(match.firstTeam.firstTeamId).then(async (team: TeamEntity | null) => {
         if (team == null) {
-            return await teamRepository.createTeam(match.firstTeam.firstTeamName, match.firstTeam.firstTeamId);
+            const createdTeamEntity = await teamRepository.createTeam(match.firstTeam.firstTeamName, match.firstTeam.firstTeamId);
+            return createdTeamEntity
         }
         return team;
     });
 
     const teamAwayEntity: TeamEntity = await teamRepository.getTeamByApiIdOrNull(match.secondTeam.secondTeamId).then(async (team: TeamEntity | null) => {
         if (team == null) {
-            return await teamRepository.createTeam(match.secondTeam.secondTeamName, match.secondTeam.secondTeamId);
+            const createdTeamEntity = await teamRepository.createTeam(match.secondTeam.secondTeamName, match.secondTeam.secondTeamId);
+            return createdTeamEntity;
         }
         return team;
     });
@@ -152,6 +158,21 @@ async function closeMatches(matchEventStats: MatchEventStat[]) {
     }
 }
 
+async function updateBetsWhenMatchIsClosed(matchEventStat: MatchEventStat){
+    console.log("MatchService - updateBetsWhenMatchIsClosed");
+
+    const betEntities: BetEntity[] = await betRepository.fetchBetByMatchId(matchEventStat.api_id).catch((error) => {
+        throw error;
+    });
+
+    for (const betEntity of betEntities){
+        betEntity.setBetScore();
+        await betRepository.updateScoreBet(betEntity.getId(), betEntity.getBetScore(), betEntity.getBetScoreDiff()).catch((error) => {
+            throw error;
+        });
+    }
+}
+
 async function updateEndedMatches() {
     console.log("MatchService - updateEndedMatches");
 
@@ -172,8 +193,13 @@ async function updateEndedMatches() {
             await matchRepository.closeMatch(matchEventStat).catch((error) => {
                 throw error;
             });
+
+            await updateBetsWhenMatchIsClosed(matchEventStat).catch((error) => {
+                throw error;
+            });
         }
         // wait between each call to rugby api
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         await new Promise(resolve => setTimeout(resolve, 1200));
     }
 

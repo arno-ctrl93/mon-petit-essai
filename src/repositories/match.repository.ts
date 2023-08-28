@@ -1,5 +1,5 @@
 import { Match, PrismaClient } from "@prisma/client";
-import MatchEntity, { MatchWithBets, MatchWithTeams, MatchWithTeamsAndBets } from "../objects/entities/match.entity";
+import MatchEntity, { MatchWithTeams, MatchWithTeamsAndBets } from "../objects/entities/match.entity";
 import { MatchEventStat, Match as MatchJson } from "./rugby-api.repository";
 import TeamEntity from "../objects/entities/team.entity";
 const prisma = new PrismaClient();
@@ -196,6 +196,8 @@ async function fetchMatchesWithBetsByUserId(userId: string) {
                     match_id: true,
                     bet_team_away: true,
                     bet_team_home: true,
+                    bet_score: true,
+                    bet_score_diff: true,
                 },
                 where: {
                     user_id: userId

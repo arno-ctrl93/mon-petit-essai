@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Request, Response } from 'express';
 
 
 // Match France Australie match amical -> sr:sport_event:42027171
@@ -38,10 +37,10 @@ const API_URL = 'https://api.sportradar.com/rugby-union/trial/v3/en';
 // world cup 2023
 // const urn_season = 'sr:season:72847';
 // match amical international
-const urn_season = 'sr:season:100961';
+const URN_SEASON = 'sr:season:100961';
 
 async function fetchMatches(): Promise<Match[]> {
-    const summariesResponse = await axios.get(`${API_URL}/seasons/${urn_season}/summaries.json?api_key=${API_KEY}`).catch((error) => {
+    const summariesResponse = await axios.get(`${API_URL}/seasons/${URN_SEASON}/summaries.json?api_key=${API_KEY}`).catch((error) => {
         console.log(error);
         throw error;
     });
@@ -79,7 +78,7 @@ async function fetchMatches(): Promise<Match[]> {
     //sleep during 1 second
     await new Promise(resolve => setTimeout(resolve, 1200));
 
-    const probabilitiesResponse = await axios.get(`${API_URL}/seasons/${urn_season}/probabilities.json?api_key=${API_KEY}`);
+    const probabilitiesResponse = await axios.get(`${API_URL}/seasons/${URN_SEASON}/probabilities.json?api_key=${API_KEY}`);
     const data2 = probabilitiesResponse.data;
     console.log("Match find length: " + data2.sport_event_probabilities.length);
     console.log("probabilities: " + data2.sport_event_probabilities[0].markets[0].outcomes);
