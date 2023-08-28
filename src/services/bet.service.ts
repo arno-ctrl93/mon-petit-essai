@@ -24,11 +24,13 @@ async function createOrUpdateBet(dto: createOrUpdateBetInboundDto) {
 
     await betRepository.getBetByUserAndMatchIdOrNull(user.getId(), match.getId()).then(async (betEntity) => {
         if (betEntity == null) {
-            return await betRepository.createBet(dto, user.getId(), match.getId());
+            const createdBetEntity = await betRepository.createBet(dto, user.getId(), match.getId());
+            return createdBetEntity;
         }
 
         if (betEntity.getBetHomeTeam() != dto.betHomeTeam || betEntity.getBetAwayTeam() != dto.betAwayTeam) {
-            return await betRepository.updateBet(dto, betEntity.getId());
+            const updatedBetEntity = await betRepository.updateBet(dto, betEntity.getId());
+            return updatedBetEntity;
         }
         return betEntity;
     }).catch((error) => {

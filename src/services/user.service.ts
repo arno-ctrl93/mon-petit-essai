@@ -8,7 +8,7 @@ async function postUser(userDto: UserInboundDto) {
     console.log("UserService - postUser");
 
     try {
-        const createdUserEntity: UserEntity = await userRepository.postUser(userDto);
+        await userRepository.postUser(userDto);
         return;
     }
     catch (error) {
