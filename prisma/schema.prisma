@@ -38,6 +38,7 @@ model Bet {
   match         Match  @relation(fields: [match_id], references: [id])
   bet_team_home Int
   bet_team_away Int
+  bet_score     Int  @default(0)
 }
 
 model Match {
