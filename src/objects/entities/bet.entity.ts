@@ -2,7 +2,6 @@ import { Bet, Prisma } from "@prisma/client";
 import UserEntity from "./user.entity";
 import MatchEntity from "./match.entity";
 import { calculateDifferenceBetweenScoreAndBet } from "../../helper/calculate-difference.misc";
-import { runInThisContext } from "vm";
 
 
 enum BetScoreResult {
