@@ -74,28 +74,10 @@ async function getUserScore(userId: string) {
 
 }
 
-async function getLeaderboardGroup(email: string) {
-    console.log("UserService - getLeaderboardGroup");
-
-    const userEntity = await getUser(email).catch((error) => {
-        console.log(error);
-        throw error;
-    });
-    const group = userEntity.getGroup();
-    if (group == null) {
-        return [];
-    } else
-        return userRepository.getLeaderboardGroup(group.getId());
-
-}
-
-
-
 export default {
     postUser,
     getUser,
     deleteUser,
     patchUser,
-    getUserScore,
-    getLeaderboardGroup
+    getUserScore
 }

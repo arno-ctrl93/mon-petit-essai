@@ -2,13 +2,8 @@ import { Request, Response } from "express";
 import { UserInboundDto } from "../objects/dtos/inbound/user.inbound.dto";
 import { UserOutboundDto } from "../objects/dtos/outbound/user.outbound.dto";
 import { ValidationError, validate } from "class-validator";
-import UserEntity from "../objects/entities/user.entity";
 import UserService from "../services/user.service";
-import url from 'url';
-import querystring from 'querystring';
 import userService from "../services/user.service";
-import { UserGroupJson } from "../repositories/user.repository";
-import { GetLeaderboardGroupOutboundDto } from "../objects/dtos/outbound/get-leaderboard-group.outbound.dto";
 
 
 
@@ -112,24 +107,6 @@ async function getUserScore(req: Request, res: Response) {
     }
 }
 
-async function getLeaderboardGroup(req: Request, res: Response) {
-    console.log("UserController - getLeaderboardGroup")
-
-    const email = req.params.email;
-
-    try {
-        const leaderboardGroup: UserGroupJson[] = await userService.getLeaderboardGroup(email);
-        console.log(leaderboardGroup);
-        const dto = GetLeaderboardGroupOutboundDto.toDto(leaderboardGroup);
-        res.status(200).send(dto);
-    }
-    catch (error) {
-        console.log(error);
-        res.status(400).json(error);
-    }
-
-}
-
 
 
 
@@ -138,6 +115,5 @@ export default {
     getUser,
     deleteUser,
     patchUser,
-    getUserScore,
-    getLeaderboardGroup
+    getUserScore
 }
