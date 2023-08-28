@@ -4,6 +4,8 @@ import { CreateGroupInboundDto } from "../objects/dtos/inbound/create-group.inbo
 import { validate } from "class-validator";
 import { GroupOutboundDto } from "../objects/dtos/outbound/group.outbound.dto";
 import { JoinGroupInboundDto } from "../objects/dtos/inbound/join-group.inbound.dto";
+import { UserGroupJson } from "../repositories/group.repository";
+import { GetLeaderboardGroupOutboundDto } from "../objects/dtos/outbound/get-leaderboard-group.outbound.dto";
 
 
 async function createGroup(req: Request, res: Response) {
@@ -64,7 +66,26 @@ async function joinGroup(req: Request, res: Response) {
     }
 }
 
+async function getLeaderboardGroup(req: Request, res: Response) {
+    console.log("UserController - getLeaderboardGroup")
+
+    const uniqueId = req.params.uniqueId;
+
+    try {
+        const leaderboardGroup: UserGroupJson[] = await groupService.getLeaderboardGroup(uniqueId);
+        console.log(leaderboardGroup);
+        const dto = GetLeaderboardGroupOutboundDto.toDto(leaderboardGroup);
+        res.status(200).send(dto);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+
+}
+
 export default {
     createGroup,
-    joinGroup
+    joinGroup,
+    getLeaderboardGroup
 }
