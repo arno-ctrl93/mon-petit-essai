@@ -1,7 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import UserEntity, { UserWithGroupAndBets } from "../objects/entities/user.entity";
 import { UserInboundDto } from "../objects/dtos/inbound/user.inbound.dto";
-import { log } from "console";
 
 const prisma = new PrismaClient();
 

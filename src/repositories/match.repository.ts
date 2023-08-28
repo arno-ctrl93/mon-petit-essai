@@ -1,5 +1,5 @@
 import { Match, PrismaClient } from "@prisma/client";
-import MatchEntity, { MatchWithBets, MatchWithTeams, MatchWithTeamsAndBets } from "../objects/entities/match.entity";
+import MatchEntity, { MatchWithTeams, MatchWithTeamsAndBets } from "../objects/entities/match.entity";
 import { MatchEventStat, Match as MatchJson } from "./rugby-api.repository";
 import TeamEntity from "../objects/entities/team.entity";
 const prisma = new PrismaClient();

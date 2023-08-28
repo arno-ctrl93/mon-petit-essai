@@ -1,5 +1,4 @@
 import { Group, PrismaClient } from "@prisma/client";
-import { randomUUID } from "crypto";
 import GroupEntity from "../objects/entities/group.entity";
 import { CreateGroupInboundDto } from "../objects/dtos/inbound/create-group.inbound.dto";
 import hashIdMisc from "../helper/hash-id.misc";
