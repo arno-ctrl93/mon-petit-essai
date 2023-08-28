@@ -158,8 +158,6 @@ async function closeMatches(matchEventStats: MatchEventStat[]) {
     }
 }
 
-
-
 async function updateBetsWhenMatchIsClosed(matchEventStat: MatchEventStat){
     console.log("MatchService - updateBetsWhenMatchIsClosed");
 
@@ -169,7 +167,7 @@ async function updateBetsWhenMatchIsClosed(matchEventStat: MatchEventStat){
 
     for (const betEntity of betEntities){
         betEntity.setBetScore();
-        await betRepository.updateScoreBet(betEntity.getId(), betEntity.getBetScore()).catch((error) => {
+        await betRepository.updateScoreBet(betEntity.getId(), betEntity.getBetScore(), betEntity.getBetScoreDiff()).catch((error) => {
             throw error;
         });
     }

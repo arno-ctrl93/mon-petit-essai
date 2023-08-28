@@ -71,7 +71,7 @@ async function createBet(dto: createOrUpdateBetInboundDto, userId: string, match
     }
 }
 
-async function updateScoreBet(betId: string, score: number) {
+async function updateScoreBet(betId: string, score: number, scoreDiff: number) {
     console.log("BetRepository - updateScoreBet");
 
     try {
@@ -80,7 +80,8 @@ async function updateScoreBet(betId: string, score: number) {
                 id: betId
             },
             data: {
-                bet_score: score
+                bet_score: score,
+                bet_score_diff: scoreDiff
             }
 
         });
