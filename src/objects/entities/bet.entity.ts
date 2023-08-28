@@ -2,7 +2,15 @@ import { Bet, Prisma } from "@prisma/client";
 import UserEntity from "./user.entity";
 import MatchEntity from "./match.entity";
 import { calculateDifferenceBetweenScoreAndBet } from "../../helper/calculate-difference.misc";
+import { runInThisContext } from "vm";
 
+
+enum BetScoreResult {
+    WIN = "WIN",
+    LOSE = "LOSE",
+    PERFECT = "PERFECT",
+    CLOSED = "CLOSED"
+}
 
 const betWithMatch = Prisma.validator<Prisma.BetArgs>()({
     include: {
@@ -35,6 +43,8 @@ export default class BetEntity {
 
     private betScore: number;
 
+    private betScoreDiff: number;
+
     public static toEntity(bet: Bet): BetEntity;
     public static toEntity(bet: BetWithMatch): BetEntity;
     public static toEntity(bet: BetWithUserAndMatch): BetEntity {
@@ -42,7 +52,8 @@ export default class BetEntity {
             bet.id,
             bet.bet_team_home,
             bet.bet_team_away,
-            bet.bet_score
+            bet.bet_score,
+            bet.bet_score_diff
         );
 
         if (bet.user != null) {
@@ -55,13 +66,14 @@ export default class BetEntity {
         return betEntity;
     }
 
-    constructor(id: string, betHomeTeam: number, betAwayTeam: number, betScore: number) {
+    constructor(id: string, betHomeTeam: number, betAwayTeam: number, betScore: number, betScoreDiff: number) {
         this.id = id;
         this.user = null;
         this.match = null;
         this.betHomeTeam = betHomeTeam;
         this.betAwayTeam = betAwayTeam;
         this.betScore = betScore;
+        this.betScoreDiff = betScoreDiff;
     }
 
     // getters and setters
@@ -89,6 +101,26 @@ export default class BetEntity {
     public getBetScore(): number {
         return this.betScore;
     }
+
+    public getBetScoreDiff(): number {
+        return this.betScoreDiff;
+    }
+
+    public getBetScoreResult(): BetScoreResult {
+        if (this.betScore === 0) {
+            return BetScoreResult.LOSE;
+        }
+        else if (this.betScoreDiff === 0) {
+            return BetScoreResult.PERFECT;
+        }
+        else if (this.betScoreDiff < 7) {
+            return BetScoreResult.CLOSED;
+        }
+        else {
+            return BetScoreResult.WIN;
+        }
+    }
+
 
     public setBetScore(): void {
         if (this.match == null) {
@@ -141,9 +173,7 @@ export default class BetEntity {
         else {
             this.betScore = 0;
         }
-
-
-
+        this.betScoreDiff = matchDiff;
     }
 
 }
