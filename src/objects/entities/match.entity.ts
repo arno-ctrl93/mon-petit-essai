@@ -23,17 +23,29 @@ export type MatchWithTeamsAndBets = Prisma.MatchGetPayload<typeof matchWithTeams
 
 export default class MatchEntity {
     private readonly id: string;
+
     private readonly apiId: string;
+    
     private round: string;
+    
     private startedAt: Date;
+    
     private closedAt: Date | null;
+    
     private teamHome: TeamEntity | null;
+    
     private teamAway: TeamEntity | null;
+    
     private bets: BetEntity[] | null;
+    
     private scoreHome: number;
+    
     private scoreAway: number;
+    
     private probabilityHome: number;
+    
     private probabilityAway: number;
+    
     private probabilityDraw: number;
 
     public static toEntity(match: Match): MatchEntity;
