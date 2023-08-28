@@ -7,6 +7,8 @@ import teamRepository from "../repositories/team.repository";
 import MatchEntity from "../objects/entities/match.entity";
 import UserEntity from "../objects/entities/user.entity";
 import userRepository from "../repositories/user.repository";
+import betRepository from "../repositories/bet.repository";
+import BetEntity from "../objects/entities/bet.entity";
 
 
 async function createMatch(match: Match) {
@@ -156,6 +158,31 @@ async function closeMatches(matchEventStats: MatchEventStat[]) {
     }
 }
 
+function calculateDifferenceBetweenScoresAndBet(homeScore: number, awayScore: number, betHomeScore: number, betAwayScore: number) {
+    console.log("MatchService - calculateDifferenceBetweenScoresAndBet");
+
+    const differenceHomeScore = Math.abs(homeScore - betHomeScore);
+    const differenceAwayScore = Math.abs(awayScore - betAwayScore);
+
+    return differenceHomeScore + differenceAwayScore;
+}
+
+
+async function updateBetsWhenMatchIsClosed(matchEventStat: MatchEventStat){
+    console.log("MatchService - updateBetsWhenMatchIsClosed");
+
+    const betEntities: BetEntity[] = await betRepository.fetchBetByMatchId(matchEventStat.api_id).catch((error) => {
+        throw error;
+    });
+
+    for (const betEntity of betEntities){
+        betEntity.setBetScore();
+        await betRepository.updateScoreBet(betEntity.getId(), betEntity.getBetScore()).catch((error) => {
+            throw error;
+        });
+    }
+}
+
 async function updateEndedMatches() {
     console.log("MatchService - updateEndedMatches");
 
@@ -174,6 +201,10 @@ async function updateEndedMatches() {
         if (matchEventStat.is_ended) {
             console.log("MatchService - fetchTodayPastAndNotClosedMatches - match is ended");
             await matchRepository.closeMatch(matchEventStat).catch((error) => {
+                throw error;
+            });
+
+            await updateBetsWhenMatchIsClosed(matchEventStat).catch((error) => {
                 throw error;
             });
         }

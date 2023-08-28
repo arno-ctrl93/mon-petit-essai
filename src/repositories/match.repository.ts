@@ -196,6 +196,7 @@ async function fetchMatchesWithBetsByUserId(userId: string) {
                     match_id: true,
                     bet_team_away: true,
                     bet_team_home: true,
+                    bet_score: true,
                 },
                 where: {
                     user_id: userId

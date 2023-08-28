@@ -9,7 +9,7 @@ const userWithGroup = Prisma.validator<Prisma.UserArgs>()({
     }
 });
 
-const UserWithBets = Prisma.validator<Prisma.UserArgs>()({
+const userWithBets = Prisma.validator<Prisma.UserArgs>()({
     include: {
         bets: true
     }
@@ -19,9 +19,9 @@ const UserWithBets = Prisma.validator<Prisma.UserArgs>()({
 
 export type UserWithGroup = Prisma.UserGetPayload<typeof userWithGroup>;
 
-export type UserWithBets = Prisma.UserGetPayload<typeof UserWithBets>;
+export type UserWithBets = Prisma.UserGetPayload<typeof userWithBets>;
 
-export type UserWithGroupAndBets = Prisma.UserGetPayload<typeof userWithGroup> & Prisma.UserGetPayload<typeof UserWithBets>;
+export type UserWithGroupAndBets = Prisma.UserGetPayload<typeof userWithGroup> & Prisma.UserGetPayload<typeof userWithBets>;
 
 export default class UserEntity {
 
@@ -88,7 +88,7 @@ export default class UserEntity {
         if (this.bets == null)
             return 0;
 
-        const score: number = this.bets.reduce((accumulator, bet) => accumulator + bet.getScore(), 0);
+        const score: number = this.bets.reduce((accumulator, bet) => accumulator + bet.getBetScore(), 0);
 
         return score;
     }
