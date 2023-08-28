@@ -1,4 +1,4 @@
-import { IsBase64, IsByteLength, IsEmail, IsHexadecimal, IsString, validate } from "class-validator";
+import { IsByteLength, IsEmail, IsString } from "class-validator";
 
 export class JoinGroupInboundDto {
 

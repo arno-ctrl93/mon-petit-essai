@@ -1,7 +1,7 @@
-import { IsEmail, IsInt, IsPositive, IsString, isString } from "class-validator";
+import { IsEmail, IsInt, IsPositive, IsString } from "class-validator";
 
 
-export default class createOrUpdateBetInboundDto {
+export default class CreateOrUpdateBetInboundDto {
 
     @IsEmail()
     userEmail: string;
