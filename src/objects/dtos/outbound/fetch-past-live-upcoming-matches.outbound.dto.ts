@@ -6,12 +6,14 @@ import MatchEntity from "../../entities/match.entity";
 
 export default class FetchPastLiveUpcomingMatchesOutboundDto {
 
-    previousMaytches: PreviousMatchDto[];
+    previousMatches: PreviousMatchDto[];
+    
     liveMatches: LiveMatchDto[];
+    
     upcomingMatches: UpcomingMatchDto[];
 
     public static toDto(matchEntities: MatchEntity[]) {
-        const previousMaytches: PreviousMatchDto[] = [];
+        const previousMatches: PreviousMatchDto[] = [];
         const liveMatches: LiveMatchDto[] = [];
         const upcomingMatches: UpcomingMatchDto[] = [];
         for (const matchEntity of matchEntities) {
@@ -19,7 +21,7 @@ export default class FetchPastLiveUpcomingMatchesOutboundDto {
             const closedAt = matchEntity.getClosedAt();
             const now = new Date();
             if (closedAt != null) {
-                previousMaytches.push(PreviousMatchDto.toDto(matchEntity));
+                previousMatches.push(PreviousMatchDto.toDto(matchEntity));
             } else if (startedAt != null && startedAt < now) {
                 liveMatches.push(LiveMatchDto.toDto(matchEntity));
             }
@@ -27,11 +29,11 @@ export default class FetchPastLiveUpcomingMatchesOutboundDto {
                 upcomingMatches.push(UpcomingMatchDto.toDto(matchEntity));
             }
         }
-        return new FetchPastLiveUpcomingMatchesOutboundDto(previousMaytches, liveMatches, upcomingMatches);
+        return new FetchPastLiveUpcomingMatchesOutboundDto(previousMatches, liveMatches, upcomingMatches);
     }
 
-    constructor(previousMaytches: PreviousMatchDto[], liveMatches: LiveMatchDto[], upcomingMatches: UpcomingMatchDto[]) {
-        this.previousMaytches = previousMaytches;
+    constructor(previousMatches: PreviousMatchDto[], liveMatches: LiveMatchDto[], upcomingMatches: UpcomingMatchDto[]) {
+        this.previousMatches = previousMatches;
         this.liveMatches = liveMatches;
         this.upcomingMatches = upcomingMatches;
     }
