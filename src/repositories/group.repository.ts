@@ -12,8 +12,8 @@ export type UserGroupJson = {
     closed_bets: bigint;
     perfect_bets: bigint;
     total_score: bigint;
-  }
-  
+}
+
 
 async function createGroup(dto: CreateGroupInboundDto, userId: string) {
     console.log("GroupRepository - createGroup");
@@ -61,17 +61,17 @@ async function getGroupByUniqueId(uniqueId: string) {
     }
 }
 
-async function getLeaderboardGroup(uniqueId: string){
+async function getLeaderboardGroup(uniqueId: string) {
     console.log("GroupRepository - getLeaderboardGroup");
 
     try {
-        const leaderboard : UserGroupJson[]= await prisma.$queryRaw`
+        const leaderboard: UserGroupJson[] = await prisma.$queryRaw`
         SELECT
             u.name AS user_name,
             SUM(b.bet_score) AS total_score,
-            COUNT(CASE WHEN b.bet_score_diff = 0 THEN 1 END) AS perfect_bets,
-            COUNT(CASE WHEN b.bet_score_diff < 7 THEN 1 END) AS closed_bets,
-            COUNT(CASE WHEN b.bet_score <> 0 THEN 1 END) AS correct_bets
+            COUNT(CASE WHEN b.bet_score <> 0 AND b.bet_score_diff = 0 THEN 1 END) AS perfect_bets,
+            COUNT(CASE WHEN b.bet_score <> 0 AND b.bet_score_diff <= 7 AND b.bet_score_diff != 0 THEN 1 END) AS closed_bets,
+            COUNT(CASE WHEN b.bet_score <> 0 AND b.bet_score_diff > 7 THEN 1 END) AS correct_bets
         FROM public."User" u
         LEFT JOIN public."Bet" b ON u.id = b.user_id
         JOIN public."Group" g ON u.group_id = g.id
@@ -83,10 +83,10 @@ async function getLeaderboardGroup(uniqueId: string){
         console.log(leaderboard);
         return leaderboard;
     } catch (error) {
-    console.log(error);
-    throw new Error("UserRepository - getLeaderboardGroup - error");
-  }
-    
+        console.log(error);
+        throw new Error("UserRepository - getLeaderboardGroup - error");
+    }
+
 }
 
 export default {

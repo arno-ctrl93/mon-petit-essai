@@ -139,7 +139,7 @@ export default class BetEntity {
             if (matchDiff === 0){
                 this.betScore = this.match.getProbabilityDraw() * 2;
             }
-            else if (matchDiff < 7){
+            else if (matchDiff <= 7){
                 this.betScore = Math.round(this.match.getProbabilityDraw() * 1.5);
             }
             else {
@@ -150,7 +150,7 @@ export default class BetEntity {
             if (matchDiff === 0){
                 this.betScore = this.match.getProbabilityAway() * 2;
             }
-            else if (matchDiff < 7){
+            else if (matchDiff <= 7){
                 this.betScore = Math.round(this.match.getProbabilityAway() * 1.5);
             }
             else {
@@ -162,7 +162,7 @@ export default class BetEntity {
             if (matchDiff === 0){
                 this.betScore = this.match.getProbabilityHome() * 2;
             }
-            else if (matchDiff < 7){
+            else if (matchDiff <= 7){
                 this.betScore = Math.round(this.match.getProbabilityHome() * 1.5);
             }
             else {
