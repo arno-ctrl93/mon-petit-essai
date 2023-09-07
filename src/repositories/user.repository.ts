@@ -38,7 +38,8 @@ async function getUser(email: string) {
         email: email
       },
       include: {
-        group: true
+        group: true,
+        bets: true
       }
     });
 

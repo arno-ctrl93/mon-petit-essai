@@ -78,6 +78,10 @@ export default class UserEntity {
         return this.group;
     }
 
+    public fetchBet(): BetEntity[] | null {
+        return this.bets;
+    }
+
     public removeBetNotOver(): void {
         if (this.bets == null)
             return;
