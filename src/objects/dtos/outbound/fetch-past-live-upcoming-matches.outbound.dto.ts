@@ -29,7 +29,7 @@ export default class FetchPastLiveUpcomingMatchesOutboundDto {
                 upcomingMatches.push(matchEntity);
             }
         }
-        previousMatches.sort((a: MatchEntity, b: MatchEntity) => a.getStartedAt().getTime() - b.getStartedAt().getTime());
+        previousMatches.sort((a: MatchEntity, b: MatchEntity) => b.getStartedAt().getTime() - a.getStartedAt().getTime());
         return new FetchPastLiveUpcomingMatchesOutboundDto(previousMatches, liveMatches, upcomingMatches);
     }
 
