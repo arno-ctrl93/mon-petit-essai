@@ -69,6 +69,11 @@ async function getLeaderboardGroup(uniqueId: string) {
         SELECT
             u.name AS user_name,
             SUM(b.bet_score) AS total_score,
+            SUM(
+                CASE
+                    WHEN b.bet_score_diff = 1000 THEN 0
+                    ELSE b.bet_score_diff
+                END) AS total_diff,
             COUNT(CASE WHEN b.bet_score <> 0 AND b.bet_score_diff = 0 THEN 1 END) AS perfect_bets,
             COUNT(CASE WHEN b.bet_score <> 0 AND b.bet_score_diff <= 7 AND b.bet_score_diff != 0 THEN 1 END) AS closed_bets,
             COUNT(CASE WHEN b.bet_score <> 0 AND b.bet_score_diff > 7 THEN 1 END) AS correct_bets
@@ -77,7 +82,7 @@ async function getLeaderboardGroup(uniqueId: string) {
         JOIN public."Group" g ON u.group_id = g.id
         WHERE g.unique_public_id = ${uniqueId}
         GROUP BY u.id, u.name
-        ORDER BY total_score DESC;
+        ORDER BY total_score DESC, total_diff ASC;
         `;
 
         console.log(leaderboard);
