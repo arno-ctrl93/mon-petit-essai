@@ -8,7 +8,8 @@ enum BetScoreResult {
     WIN = "WIN",
     LOSE = "LOSE",
     PERFECT = "PERFECT",
-    CLOSED = "CLOSED"
+    CLOSED = "CLOSED",
+    NOT_OVER = "NOT_OVER"
 }
 
 const betWithMatch = Prisma.validator<Prisma.BetArgs>()({
@@ -106,7 +107,10 @@ export default class BetEntity {
     }
 
     public getBetScoreResult(): BetScoreResult {
-        if (this.betScore === 0) {
+        if (this.betScoreDiff === 1000)
+            return BetScoreResult.NOT_OVER;
+            
+        else if (this.betScore === 0) {
             return BetScoreResult.LOSE;
         }
         else if (this.betScoreDiff === 0) {
