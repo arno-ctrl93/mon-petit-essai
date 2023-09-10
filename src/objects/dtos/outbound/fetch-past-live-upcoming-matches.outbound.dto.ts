@@ -7,34 +7,35 @@ import MatchEntity from "../../entities/match.entity";
 export default class FetchPastLiveUpcomingMatchesOutboundDto {
 
     previousMatches: PreviousMatchDto[];
-    
+
     liveMatches: LiveMatchDto[];
-    
+
     upcomingMatches: UpcomingMatchDto[];
 
     public static toDto(matchEntities: MatchEntity[]) {
-        const previousMatches: PreviousMatchDto[] = [];
-        const liveMatches: LiveMatchDto[] = [];
-        const upcomingMatches: UpcomingMatchDto[] = [];
+        const previousMatches: MatchEntity[] = [];
+        const liveMatches: MatchEntity[] = [];
+        const upcomingMatches: MatchEntity[] = [];
         for (const matchEntity of matchEntities) {
             const startedAt = matchEntity.getStartedAt();
             const closedAt = matchEntity.getClosedAt();
             const now = new Date();
             if (closedAt != null) {
-                previousMatches.push(PreviousMatchDto.toDto(matchEntity));
+                previousMatches.push(matchEntity);
             } else if (startedAt != null && startedAt < now) {
-                liveMatches.push(LiveMatchDto.toDto(matchEntity));
+                liveMatches.push(matchEntity);
             }
             else {
-                upcomingMatches.push(UpcomingMatchDto.toDto(matchEntity));
+                upcomingMatches.push(matchEntity);
             }
         }
+        previousMatches.sort((a: MatchEntity, b: MatchEntity) => a.getStartedAt().getTime() - b.getStartedAt().getTime());
         return new FetchPastLiveUpcomingMatchesOutboundDto(previousMatches, liveMatches, upcomingMatches);
     }
 
-    constructor(previousMatches: PreviousMatchDto[], liveMatches: LiveMatchDto[], upcomingMatches: UpcomingMatchDto[]) {
-        this.previousMatches = previousMatches;
-        this.liveMatches = liveMatches;
-        this.upcomingMatches = upcomingMatches;
+    constructor(previousMatches: MatchEntity[], liveMatches: MatchEntity[], upcomingMatches: MatchEntity[]) {
+        this.previousMatches = previousMatches.map((matchEntity) => PreviousMatchDto.toDto(matchEntity));
+        this.liveMatches = liveMatches.map((matchEntity) => LiveMatchDto.toDto(matchEntity));
+        this.upcomingMatches = upcomingMatches.map((matchEntity) => UpcomingMatchDto.toDto(matchEntity));
     }
 }
