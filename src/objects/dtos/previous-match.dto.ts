@@ -3,19 +3,19 @@ import MatchEntity from "../entities/match.entity";
 
 export default class PreviousMatchDto {
     apiId: string;
-    
+
     homeTeam: string;
-    
+
     awayTeam: string;
-    
+
     homeScore: number;
-    
+
     awayScore: number;
-    
+
     betHome: number;
-    
+
     betAway: number;
-    
+
     points: number;
 
     betScoreResult: string;
@@ -35,40 +35,9 @@ export default class PreviousMatchDto {
         const betHome = bet == null ? 0 : bet.getBetHomeTeam();
         const betAway = bet == null ? 0 : bet.getBetAwayTeam();
         const betScoreResult: string = bet == null ? "LOSE" : bet.getBetScoreResult();
-        let points = 0;
-        console.log("betEntity : " + bet);
-        if (bet == null) {
-            points = 0;
-        } else {
-            if (homeScore > awayScore && bet.getBetHomeTeam() > bet.getBetAwayTeam()) {
-                if (homeScore == bet.getBetHomeTeam() && awayScore == bet.getBetAwayTeam()) {
-                    console.log("perfect prediction : team home win");
-                    points = matchEntity.getProbabilityHome() * 2;
-                } else {
-                    console.log("good prediction : team home win");
-                    points = matchEntity.getProbabilityHome();
-                }
-            } else if (homeScore < awayScore && bet.getBetHomeTeam() < bet.getBetAwayTeam()) {
-                if (homeScore == bet.getBetHomeTeam() && awayScore == bet.getBetAwayTeam()) {
-                    console.log("perfect prediction : team away win");
-                    points = matchEntity.getProbabilityAway() * 2;
-                } else {
-                    console.log("good prediction : team away win");
-                    points = matchEntity.getProbabilityAway();
-                }
-            } else if (homeScore == awayScore && bet.getBetHomeTeam() == bet.getBetAwayTeam()) {
-                if (homeScore == bet.getBetHomeTeam() && awayScore == bet.getBetAwayTeam()) {
-                    console.log("perfect prediction : draw");
-                    points = matchEntity.getProbabilityDraw() * 2;
-                } else {
-                    console.log("good prediction : draw");
-                    points = matchEntity.getProbabilityDraw();
-                }
-            } else {
-                console.log("bad prediction");
-                points = 0;
-            }
-        }
+        const points = bet == null ? 0 : bet.getBetScore();
+
+
         return new PreviousMatchDto(apiId, homeTeamName, awayTeamName, homeScore, awayScore, betHome, betAway, points, betScoreResult);
     }
 
