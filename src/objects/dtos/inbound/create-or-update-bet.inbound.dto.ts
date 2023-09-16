@@ -1,4 +1,4 @@
-import { IsEmail, IsInt, IsPositive, IsString } from "class-validator";
+import { IsEmail, IsInt, IsPositive, IsString, Min } from "class-validator";
 
 
 export default class CreateOrUpdateBetInboundDto {
@@ -7,11 +7,11 @@ export default class CreateOrUpdateBetInboundDto {
     userEmail: string;
 
     @IsInt()
-    @IsPositive()
+    @Min(0)
     betHomeTeam: number;
 
     @IsInt()
-    @IsPositive()
+    @Min(0)
     betAwayTeam: number;
 
     @IsString()
